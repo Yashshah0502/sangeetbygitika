@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yash Portfolio</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="mediaqueries.css" />
+  </head>
+  <body>
+    <nav id="desktop-nav">
+      <div class="logo">Yash Shah</div>
+      <div>
+        <ul class="nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#Skills">Skills</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+    <nav id="hamburger-nav">
+      <div class="logo">Yash Shah</div>
+      <div class="hamburger-menu">
+        <div class="hamburger-icon" onclick="toggleMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="menu-links">
+          <li><a href="#about" onclick="toggleMenu()">About</a></li>
+          <li><a href="#experience" onclick="toggleMenu()">Experience</a></li>
+          <li><a href="#projects" onclick="toggleMenu()">Projects</a></li>
+          <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+        </div>
+      </div>
+    </nav>
+    <section id="profile">
+      <div class="section__pic-container">
+        <img src="./assets/profile-pic.png" alt="John Doe profile picture" />
+      </div>
+      <div class="section__text">
+        <p class="section__text__p1">Hello, I'm</p>
+        <h1 class="title">Yash Shah</h1>
+        <p class="section__text__p2">Data Analyst</p>
+        <div class="btn-container">
+          <button
+            class="btn btn-color-2"
+            onclick="window.open('./assets/Yash_Resume.pdf')"
+          >
+            Download CV
+          </button>
+          <button class="btn btn-color-1" onclick="location.href='./#contact'">
+            Contact Info
+          </button>
+        </div>
+        <div id="socials-container">
+          <img
+            src="./assets/linkedin.png"
+            alt="My LinkedIn profile"
+            class="icon"
+            onclick="location.href='https://linkedin.com/in/yash0502'"
+          />
+          <!-- <img
+            src="./assets/github.png"
+            alt="My Github profile"
+            class="icon"
+            onclick="location.href='https://github.com/'"
+          /> -->
+        </div>
+      </div>
+    </section>
+    <section id="about">
+      <p class="section__text__p1">Get To Know More</p>
+      <h1 class="title">About Me</h1>
+      <div class="section-container">
+        <div class="section__pic-container">
+          <img
+            src="./assets/about-pic.png"
+            alt="Profile picture"
+            class="about-pic"
+          />
+        </div>
+        <div class="about-details-container">
+          <div class="about-containers">
+            <div class="details-container">
+              <img
+                src="./assets/experience.png"
+                alt="Experience icon"
+                class="icon"
+              />
+              <h3>Experience</h3>
+              <p>1.5+ years <br />Data Analyst</p>
+            </div>
+            <div class="details-container">
+              <img
+                src="./assets/education.png"
+                alt="Education icon"
+                class="icon"
+              />
+              <h3>Education</h3>
+              <p>
+                Bachelors Degree Computer Engineering<br />Masters Degree in
+                Information Technology
+              </p>
+            </div>
+          </div>
+          <div class="text-container">
+            <p>
+              I am a results-driven data analyst with expertise in Python, SQL,
+              and data visualization tools like Power BI and Tableau. With
+              experience at Arizona State University and the NYC Department of
+              Finance, I have streamlined workflows, automated data processes,
+              and developed dashboards to drive data-driven decision-making. My
+              strong analytical and problem-solving skills allow me to identify
+              trends, optimize reporting, and improve operational efficiency. I
+              am passionate about leveraging data to solve complex business
+              challenges and am currently seeking a full-time opportunity where
+              I can apply my technical and analytical skills to make a
+              meaningful impact.
+            </p>
+          </div>
+        </div>
+      </div>
+      <img
+        src="./assets/arrow.png"
+        alt="Arrow icon"
+        class="icon arrow"
+        onclick="location.href='./#experience'"
+      />
+    </section>
+    <section id="Skills">
+      <p class="section__text__p1">Explore My</p>
+      <h1 class="title">skills</h1>
+      <div class="experience-details-container">
+        <div class="about-containers">
+          <div class="details-container">
+            <h2 class="experience-sub-title">Data Analysis & Visualization</h2>
+            <div class="article-container">
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>Python</h3>
+                  <p>Experienced</p>
+                </div>
+              </article>
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>SQL</h3>
+                  <p>Experienced</p>
+                </div>
+              </article>
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>Power BI</h3>
+                  <p>Intermediate</p>
+                </div>
+              </article>
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>Tableau</h3>
+                  <p>Basic</p>
+                </div>
+              </article>
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>Matplotlib & Seaborn</h3>
+                  <p>Basic</p>
+                </div>
+              </article>
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>Excel</h3>
+                  <p>Intermediate</p>
+                </div>
+              </article>
+            </div>
+          </div>
+          <div class="details-container">
+            <h2 class="experience-sub-title">Data Processing & Engineering</h2>
+            <div class="article-container">
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>AWS (S3, Glue, Redshift)</h3>
+                  <p>Basic</p>
+                </div>
+              </article>
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>Statistical & Predictive Analysis</h3>
+                  <p>Intermediate</p>
+                </div>
+              </article>
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>Version Control (Git, GitHub)</h3>
+                  <p>Intermediate</p>
+                </div>
+              </article>
+              <article>
+                <img
+                  src="./assets/checkmark.png"
+                  alt="Experience icon"
+                  class="icon"
+                />
+                <div>
+                  <h3>ETL Pipelines (Data Cleaning & Transformation)</h3>
+                  <p>Intermediate</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+      <img
+        src="./assets/arrow.png"
+        alt="Arrow icon"
+        class="icon arrow"
+        onclick="location.href='./#projects'"
+      />
+    </section>
+
+
+    <section id="experience">
+      <h1 class="title">
+        <span class="icon"><i class="fas fa-briefcase"></i></span> Experience
+      </h1>
+      <div class="timeline-container">
+        <div class="timeline">
+          <!-- Timeline Entry One (Left Side) -->
+          <div class="timeline-entry left">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+              <h3 class="experience-title">Data Analyst</h3>
+              <h4 class="company-title">Arizona State University</h4>
+              <p class="experience-dates">January 2025 - Present</p>
+            </div>
+          </div>
+          <!-- Timeline Entry Two (Right Side) -->
+          <div class="timeline-entry right">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+              <h3 class="experience-title">Summer Intern</h3>
+              <h4 class="company-title">NYC Department of Finance</h4>
+              <p class="experience-dates">June 2024 - August 2024</p>
+            </div>
+          </div>
+          <!-- Timeline Entry Three (Left Side) -->
+          <div class="timeline-entry left">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+              <h3 class="experience-title">Python Developer</h3>
+              <h4 class="company-title">AI Genesis Glib</h4>
+              <p class="experience-dates">March 2023 - August 2023</p>
+            </div>
+          </div>
+          <!-- Timeline Entry Four (Right Side) -->
+          <div class="timeline-entry right">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+              <h3 class="experience-title">Web Developer</h3>
+              <h4 class="company-title">Webcare Infoway</h4>
+              <p class="experience-dates">May 2022 - July 2022</p>
+            </div>
+          </div>
+          <!-- Timeline Entry Five (Left Side) -->
+          <div class="timeline-entry left">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+              <h3 class="experience-title">Web Developer</h3>
+              <h4 class="company-title">Infikey</h4>
+              <p class="experience-dates">June 2021 - July 2021</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Projects</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <section id="projects">
+            <p class="section__text__p1">Browse My Recent</p>
+            <h1 class="title">Projects</h1>
+            <div class="experience-details-container">
+                <div class="about-containers">
+                    <!-- Project One -->
+                    <div class="details-container color-container">
+                        <div class="article-container">
+                            <img src="./assets/project-1.png" alt="Stock Market Prediction" class="project-img">
+                        </div>
+                        <h2 class="experience-sub-title project-title">Stock Market Prediction</h2>
+                        <div class="btn-container">
+                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'">Github</button>
+                            <button class="btn btn-color-2 project-btn" onclick="location.href='stock-market-prediction.html'">More Info</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Two -->
+                    <div class="details-container color-container">
+                        <div class="article-container">
+                            <img src="./assets/project-2.png" alt="Sales Data Analysis" class="project-img">
+                        </div>
+                        <h2 class="experience-sub-title project-title">Sales Data Analysis</h2>
+                        <div class="btn-container">
+                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'">Github</button>
+                            <button class="btn btn-color-2 project-btn" onclick="location.href='sales-data-analysis.html'">More Info</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Three -->
+                    <div class="details-container color-container">
+                        <div class="article-container">
+                            <img src="./assets/project-3.png" alt="Chatbot Development" class="project-img">
+                        </div>
+                        <h2 class="experience-sub-title project-title">Chatbot Development</h2>
+                        <div class="btn-container">
+                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'">Github</button>
+                            <button class="btn btn-color-2 project-btn" onclick="location.href='chatbot-development.html'">More Info</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+    </html>
+    
+
+ 
+    <section id="contact">
+      <p class="section__text__p1">Get in Touch</p>
+      <h1 class="title">Contact Us</h1>
+    
+      <div class="contact-container">
+        <!-- Left Side: Email and LinkedIn -->
+        <div class="contact-info-left">
+          <div class="contact-info-container">
+            <img src="./assets/email.png" alt="Email icon" class="icon contact-icon email-icon" />
+            <p><a href="mailto:yshah43@asu.edu" class="contact-link">yshah43@asu.edu</a></p>
+          </div>
+          <div class="contact-info-container">
+            <img src="./assets/linkedin.png" alt="LinkedIn icon" class="icon contact-icon" />
+            <p><a href="https://www.linkedin.com" class="contact-link">LinkedIn</a></p>
+          </div>
+        </div>
+    
+        <!-- Right Side: Contact Form -->
+        <div class="contact-form-container">
+          <h2>Let’s Connect</h2>
+          <form>
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+    
+<!-- Bottom Line -->
+<div class="bottom-line"></div>
+
+<!-- Footer Navigation -->
+<footer>
+  <nav class="footer-nav">
+    <ul class="footer-nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#Skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <p>© Yash Shah | All rights reserved</p>
+</footer>
