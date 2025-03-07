@@ -155,7 +155,7 @@
 .timeline-entry {
   position: relative;
   width: 50%;
-  padding: 20px 40px;
+  padding: 20px 15px;
   box-sizing: border-box;
   display: flex;
   align-items: flex-start;
@@ -297,3 +297,101 @@
     margin-right: 0 !important;
   }
 }
+/* Projects Section Styling */
+
+/* Main projects container */
+.projects-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Each row of projects */
+.projects-row {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Individual project container */
+.projects-row .details-container {
+  flex: 0 0 calc(33.333% - 2rem);
+  min-width: 250px;
+  max-width: 350px;
+  background-color: white;
+  border-radius: 2rem;
+  padding: 20px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+/* Project container hover effect */
+.projects-row .details-container:hover {
+  transform: translateY(-10px);
+}
+
+/* Project image container */
+.projects-row .article-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Project image */
+.projects-row .project-img {
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  object-fit: cover;
+}
+
+/* Project title */
+.projects-row .project-title {
+  margin: 1rem 0;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+/* Project buttons container */
+.projects-row .btn-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Responsive layout for smaller screens */
+@media screen and (max-width: 992px) {
+  .projects-row {
+    justify-content: center;
+  }
+  
+  .projects-row .details-container {
+    flex: 0 0 calc(50% - 2rem);
+    max-width: 400px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .projects-row .details-container {
+    flex: 0 0 100%;
+    max-width: 450px;
+  }
+}
+
+/* Color container specific styles (if you already have these, you can keep your existing ones) */
+.color-container {
+  background-color: white;
+  border-radius: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Any existing button styles should remain the same */
