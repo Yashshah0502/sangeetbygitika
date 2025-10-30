@@ -1,13 +1,35 @@
 import Image from "next/image";
+import { createClient } from "@supabase/supabase-js";
 import LoadingScreen from "./components/LoadingScreen";
 
-const dummyProducts = [
-  { id: 1, name: "Royal Pink Clutch", price: "₹3,499", img: "/logo.png" },
-  { id: 2, name: "Golden Tote Bag", price: "₹4,999", img: "/logo.png" },
-  { id: 3, name: "Silk Potli Bag", price: "₹2,999", img: "/logo.png" },
-];
+type Product = {
+  id: string;
+  name: string;
+  price: number | null;
+  image_url: string;
+};
 
-export default function Home() {
+async function getProducts(): Promise<Product[]> {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+  const { data, error } = await supabase
+    .from("products")
+    .select("id,name,price,image_url")
+    .eq("is_available", true)
+    .limit(24);
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+  return data ?? [];
+}
+
+export default async function Home() {
+  const products = await getProducts();
+
   return (
     <>
       <LoadingScreen />
@@ -22,21 +44,23 @@ export default function Home() {
         </header>
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 pb-20">
-          {dummyProducts.map((item) => (
+          {products.map((p) => (
             <div
-              key={item.id}
+              key={p.id}
               className="bg-white rounded-2xl shadow-luxury p-4 hover:shadow-xl transition duration-300"
             >
               <Image
-                src={item.img}
-                alt={item.name}
-                width={400}
-                height={400}
+                src={p.image_url}
+                alt={p.name}
+                width={800}
+                height={800}
                 className="rounded-xl object-cover"
               />
               <div className="mt-3 text-center">
-                <h3 className="font-display text-lg">{item.name}</h3>
-                <p className="text-sangeet-gold font-medium">{item.price}</p>
+                <h3 className="font-display text-lg">{p.name}</h3>
+                {p.price != null && (
+                  <p className="text-sangeet-gold font-medium">₹{p.price}</p>
+                )}
               </div>
             </div>
           ))}
