@@ -1,15 +1,27 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Sangeet Custom Colors */
+  --color-sangeet-gold: #D4AF37;
+  --color-sangeet-cream: #F5F5DC;
+  --color-charcoal: #36454F;
+
+  /* Custom Fonts */
+  --font-display: var(--font-playfair);
+  --font-body: var(--font-inter);
+
+  /* Custom Shadows */
+  --shadow-luxury: 0 10px 40px rgba(212, 175, 55, 0.1);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
