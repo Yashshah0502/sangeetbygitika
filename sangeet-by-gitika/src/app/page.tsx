@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
 import LoadingScreen from "./components/LoadingScreen";
 
@@ -45,24 +46,23 @@ export default async function Home() {
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 pb-20">
           {products.map((p) => (
-            <div
-              key={p.id}
-              className="bg-white rounded-2xl shadow-luxury p-4 hover:shadow-xl transition duration-300"
-            >
-              <Image
-                src={p.image_url}
-                alt={p.name}
-                width={800}
-                height={800}
-                className="rounded-xl object-cover"
-              />
-              <div className="mt-3 text-center">
-                <h3 className="font-display text-lg">{p.name}</h3>
-                {p.price != null && (
-                  <p className="text-sangeet-gold font-medium">₹{p.price}</p>
-                )}
+            <Link href={`/product/${p.id}`} key={p.id}>
+              <div className="bg-white rounded-2xl shadow-luxury p-4 hover:shadow-xl transition duration-300 cursor-pointer">
+                <Image
+                  src={p.image_url}
+                  alt={p.name}
+                  width={800}
+                  height={800}
+                  className="rounded-xl object-cover"
+                />
+                <div className="mt-3 text-center">
+                  <h3 className="font-display text-lg">{p.name}</h3>
+                  {p.price != null && (
+                    <p className="text-sangeet-gold font-medium">₹{p.price}</p>
+                  )}
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </section>
 
