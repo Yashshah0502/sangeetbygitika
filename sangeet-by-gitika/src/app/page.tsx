@@ -10,6 +10,7 @@ import LoadingScreen from "./components/LoadingScreen";
 import Header from "./components/Header";
 import ProductCard from "./components/ProductCard";
 import FloatingContactButton from "./components/FloatingContactButton";
+import HeroCarousel from "./components/HeroCarousel";
 import { useSearchParams } from "next/navigation";
 import { useInView } from "react-intersection-observer";
 
@@ -150,12 +151,46 @@ export default function Home() {
     }
   };
 
+  // Hero carousel slides - you can later make this dynamic from Supabase
+  const heroSlides = [
+    {
+      id: "1",
+      image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=1920&q=80",
+      alt: "Elegant Potli Bags Collection",
+      title: "Timeless Elegance",
+      subtitle: "Handcrafted potli bags for every occasion",
+      cta: "Shop Collection",
+      link: "/",
+    },
+    {
+      id: "2",
+      image: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=1920&q=80",
+      alt: "Luxury Clutches",
+      title: "Statement Pieces",
+      subtitle: "Stunning clutches to complete your look",
+      cta: "Explore Now",
+      link: "/",
+    },
+    {
+      id: "3",
+      image: "https://images.unsplash.com/photo-1564422170194-896b89110ef8?w=1920&q=80",
+      alt: "New Arrivals",
+      title: "New Arrivals",
+      subtitle: "Fresh designs just landed",
+      cta: "See What's New",
+      link: "/",
+    },
+  ];
+
   return (
     <>
       <LoadingScreen />
       <Header />
       <FloatingContactButton />
       <main className="min-h-screen text-brand-text">
+        {/* Hero Carousel - Only show when not searching */}
+        {!searchQuery && <HeroCarousel slides={heroSlides} autoPlayInterval={5000} />}
+
         {/* Search Results Indicator */}
         {searchQuery && (
           <motion.div
