@@ -1,18 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import useEmblaCarousel from "embla-carousel-react";
 
 export default function ImageCarousel({ images }: { images: string[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, skipSnaps: false });
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const scrollTo = useCallback((index: number) => {
+    if (emblaApi) emblaApi.scrollTo(index);
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const onSelect = () => {
+      setCurrentIndex(emblaApi.selectedScrollSnap());
+    };
+
+    emblaApi.on("select", onSelect);
+    onSelect();
+
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi]);
 
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    scrollPrev();
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    scrollNext();
   };
 
   // If only one image, show it without navigation
@@ -32,25 +61,21 @@ export default function ImageCarousel({ images }: { images: string[] }) {
 
   return (
     <div className="relative">
-      {/* Main Image */}
-      <div className="relative overflow-hidden rounded-2xl">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Image
-              src={images[currentIndex]}
-              alt={`Product image ${currentIndex + 1}`}
-              width={800}
-              height={800}
-              className="rounded-2xl object-cover w-full h-[400px] md:h-[500px]"
-            />
-          </motion.div>
-        </AnimatePresence>
+      {/* Main Image with Embla Carousel */}
+      <div className="relative overflow-hidden rounded-2xl" ref={emblaRef}>
+        <div className="flex">
+          {images.map((img, idx) => (
+            <div key={idx} className="flex-[0_0_100%] min-w-0">
+              <Image
+                src={img}
+                alt={`Product image ${idx + 1}`}
+                width={800}
+                height={800}
+                className="rounded-2xl object-cover w-full h-[400px] md:h-[500px]"
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Navigation Buttons */}
         {images.length > 1 && (
@@ -94,12 +119,12 @@ export default function ImageCarousel({ images }: { images: string[] }) {
 
       {/* Thumbnail Indicators */}
       {images.length > 1 && (
-        <div className="flex gap-2 mt-4 justify-center">
+        <div className="flex gap-2 mt-4 justify-center overflow-x-auto pb-2">
           {images.map((img, idx) => (
             <button
               key={idx}
-              onClick={() => setCurrentIndex(idx)}
-              className={`transition-all ${
+              onClick={() => scrollTo(idx)}
+              className={`transition-all flex-shrink-0 ${
                 idx === currentIndex
                   ? "ring-2 ring-brand-primary scale-110"
                   : "opacity-60 hover:opacity-100"

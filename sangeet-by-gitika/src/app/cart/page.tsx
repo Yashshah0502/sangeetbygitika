@@ -31,7 +31,7 @@ export default function CartPage() {
         <main className="min-h-screen text-brand-text px-6 py-12">
           <div className="max-w-2xl mx-auto text-center">
             <h1 className="font-display text-3xl md:text-4xl text-brand-primary mb-4">
-              Your Wishlist is Empty
+              Your Bucket is Empty
             </h1>
             <p className="text-brand-text/70 mb-8">
               Add some beautiful pieces to your wishlist!

@@ -3,14 +3,18 @@
 import Link from "next/link";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
-import { motion } from "framer-motion";
-import { Menu, Search, Heart, ShoppingBag } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, Search, Heart, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const { totalItems } = useCart();
   const { wishlistCount } = useWishlist();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   const categories = [
     { name: "Tote", href: "/category/tote" },
@@ -20,6 +24,15 @@ export default function Header() {
     { name: "Handbag", href: "/category/handbag" },
     { name: "Accessories", href: "/category/accessories" },
   ];
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/?search=${encodeURIComponent(searchQuery)}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <>
@@ -51,7 +64,10 @@ export default function Header() {
 
           {/* Right: Icons */}
           <div className="flex items-center gap-4 md:gap-6">
-            <button className="text-brand-text hover:text-brand-primary transition-colors hover:scale-110 transform duration-200">
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="text-brand-text hover:text-brand-primary transition-colors hover:scale-110 transform duration-200"
+            >
               <Search className="w-5 h-5" />
             </button>
             <Link
@@ -86,6 +102,40 @@ export default function Header() {
             </Link>
           </div>
         </div>
+
+        {/* Search Bar */}
+        <AnimatePresence>
+          {isSearchOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden border-t border-gray-200 bg-white"
+            >
+              <form onSubmit={handleSearch} className="max-w-2xl mx-auto px-6 py-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search for bags, accessories..."
+                    autoFocus
+                    className="w-full px-5 py-3 pl-12 pr-12 rounded-full border-2 border-brand-primary/30 focus:outline-none focus:border-brand-primary transition-all text-brand-text"
+                  />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <button
+                    type="button"
+                    onClick={() => setIsSearchOpen(false)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-primary transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.header>
 
       {/* Side Drawer */}

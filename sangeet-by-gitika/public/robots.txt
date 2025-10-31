@@ -1,0 +1,10 @@
+# Allow all bots to crawl
+User-agent: *
+Allow: /
+
+# Disallow admin pages
+Disallow: /admin/
+Disallow: /admin
+
+# Sitemap
+Sitemap: https://sangeetbygitika.com/sitemap.xml

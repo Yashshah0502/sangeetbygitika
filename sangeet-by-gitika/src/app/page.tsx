@@ -1,21 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
-import { Heart } from "lucide-react";
 import LoadingScreen from "./components/LoadingScreen";
 import Header from "./components/Header";
+import ProductCard from "./components/ProductCard";
+import { useSearchParams } from "next/navigation";
 
 type Product = {
   id: string;
   name: string;
   price: number | null;
   image_url: string;
+  image_urls?: string[];
   category: string;
   created_at: string;
 };
@@ -27,6 +28,8 @@ export default function Home() {
   const [sortBy, setSortBy] = useState("Newest");
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams?.get("search") || "";
 
   useEffect(() => {
     async function fetchProducts() {
@@ -36,7 +39,7 @@ export default function Home() {
       );
       const { data } = await supabase
         .from("products")
-        .select("id,name,price,image_url,category,created_at")
+        .select("id,name,price,image_url,image_urls,category,created_at")
         .eq("is_available", true)
         .limit(24);
 
@@ -49,7 +52,15 @@ export default function Home() {
   useEffect(() => {
     let result = [...products];
 
-    // Filter
+    // Search Filter
+    if (searchQuery.trim()) {
+      result = result.filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Category Filter
     if (filter !== "All") {
       result = result.filter((p) =>
         p.category?.toLowerCase() === filter.toLowerCase()
@@ -68,7 +79,7 @@ export default function Home() {
     }
 
     setFilteredProducts(result);
-  }, [filter, sortBy, products]);
+  }, [filter, sortBy, products, searchQuery]);
 
   const handleAddToCart = (e: React.MouseEvent, p: Product) => {
     e.preventDefault();
@@ -100,6 +111,20 @@ export default function Home() {
       <LoadingScreen />
       <Header />
       <main className="min-h-screen text-brand-text">
+        {/* Search Results Indicator */}
+        {searchQuery && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-7xl mx-auto px-6 pt-6 pb-2"
+          >
+            <p className="text-brand-text/70 text-sm">
+              Search results for <span className="font-semibold text-brand-primary">"{searchQuery}"</span>
+              {filteredProducts.length > 0 && ` (${filteredProducts.length} ${filteredProducts.length === 1 ? 'product' : 'products'})`}
+            </p>
+          </motion.div>
+        )}
+
         {/* Filters & Sort - Moved to top right corner */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -140,59 +165,45 @@ export default function Home() {
 
         {/* Product Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 px-6 pb-20">
-          {filteredProducts.map((p, index) => (
-            <motion.div
-              key={p.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-luxury p-4 hover:shadow-xl transition-all duration-300 group relative"
-            >
-              {/* Wishlist Heart Icon - Top Right */}
-              <button
-                onClick={(e) => handleWishlistToggle(e, p)}
-                className="absolute top-6 right-6 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:scale-110 transition-all"
+          {filteredProducts.length === 0 ? (
+            <div className="col-span-full text-center py-20">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="max-w-md mx-auto"
               >
-                <Heart
-                  className={`w-5 h-5 transition-all ${
-                    isInWishlist(p.id)
-                      ? "fill-brand-primary stroke-brand-primary"
-                      : "stroke-gray-800 fill-none"
-                  }`}
-                />
-              </button>
-
-              <Link href={`/product/${p.id}`}>
-                <div className="relative overflow-hidden rounded-xl">
-                  <Image
-                    src={p.image_url}
-                    alt={p.name}
-                    width={800}
-                    height={800}
-                    className="rounded-xl object-cover h-[300px] sm:h-[350px] md:h-[400px] w-full group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="mt-3 text-center">
-                  <h3 className="font-display text-base md:text-lg text-brand-text group-hover:text-brand-primary transition-colors">
-                    {p.name}
-                  </h3>
-                  {p.price != null && (
-                    <p className="text-brand-accent font-medium text-sm md:text-base mt-1">
-                      ₹{p.price}
-                    </p>
-                  )}
-                </div>
-              </Link>
-
-              {/* Add to Cart Button */}
-              <button
-                onClick={(e) => handleAddToCart(e, p)}
-                className="mt-3 w-full py-2 px-4 rounded-full text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
-              >
-                Add to Cart
-              </button>
-            </motion.div>
-          ))}
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="font-display text-2xl text-brand-primary mb-2">
+                  No products found
+                </h3>
+                <p className="text-brand-text/70 mb-6">
+                  {searchQuery
+                    ? `No results for "${searchQuery}". Try a different search term.`
+                    : "No products match your filters. Try adjusting your selection."
+                  }
+                </p>
+                {searchQuery && (
+                  <Link
+                    href="/"
+                    className="inline-block px-6 py-3 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 hover:scale-105 transition-all"
+                  >
+                    View All Products
+                  </Link>
+                )}
+              </motion.div>
+            </div>
+          ) : (
+            filteredProducts.map((p, index) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                index={index}
+                isInWishlist={isInWishlist(p.id)}
+                onAddToCart={(e) => handleAddToCart(e, p)}
+                onToggleWishlist={(e) => handleWishlistToggle(e, p)}
+              />
+            ))
+          )}
         </section>
 
         {/* Contact Section */}
