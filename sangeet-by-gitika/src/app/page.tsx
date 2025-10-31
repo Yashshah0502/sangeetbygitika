@@ -5,7 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { Heart } from "lucide-react";
 import LoadingScreen from "./components/LoadingScreen";
+import Header from "./components/Header";
 
 type Product = {
   id: string;
@@ -21,6 +25,8 @@ export default function Home() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [filter, setFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
+  const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     async function fetchProducts() {
@@ -64,43 +70,49 @@ export default function Home() {
     setFilteredProducts(result);
   }, [filter, sortBy, products]);
 
+  const handleAddToCart = (e: React.MouseEvent, p: Product) => {
+    e.preventDefault();
+    if (p.price) {
+      addToCart({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        image_url: p.image_url,
+      });
+    }
+  };
+
+  const handleWishlistToggle = (e: React.MouseEvent, p: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (p.price) {
+      addToWishlist({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        image_url: p.image_url,
+      });
+    }
+  };
+
   return (
     <>
       <LoadingScreen />
+      <Header />
       <main className="min-h-screen text-brand-text">
-        {/* Header */}
-        <header className="py-8 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="font-display text-4xl md:text-5xl text-brand-primary"
-          >
-            Sangeet by Gitika
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-2 text-sm md:text-base tracking-wide text-brand-text/70"
-          >
-            Premium Handbags & Accessories
-          </motion.p>
-        </header>
-
-        {/* Filters & Sort */}
+        {/* Filters & Sort - Moved to top right corner */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center px-6 pb-8"
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="max-w-7xl mx-auto px-6 py-6 flex flex-wrap gap-4 justify-end items-center border-b border-gray-100"
         >
           <div className="flex gap-2 items-center">
-            <label className="text-sm font-medium text-brand-text">Filter:</label>
+            <label className="text-xs font-medium text-brand-text/70">Filter:</label>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="px-4 py-2 rounded-full border-2 border-brand-primary/30 bg-white/80 backdrop-blur-sm text-sm focus:outline-none focus:border-brand-primary transition"
+              className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:border-brand-primary transition hover:border-gray-300"
             >
               <option>All</option>
               <option>Tote</option>
@@ -113,11 +125,11 @@ export default function Home() {
           </div>
 
           <div className="flex gap-2 items-center">
-            <label className="text-sm font-medium text-brand-text">Sort by:</label>
+            <label className="text-xs font-medium text-brand-text/70">Sort:</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 rounded-full border-2 border-brand-accent/30 bg-white/80 backdrop-blur-sm text-sm focus:outline-none focus:border-brand-accent transition"
+              className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:border-brand-primary transition hover:border-gray-300"
             >
               <option>Newest</option>
               <option>Price (Low → High)</option>
@@ -134,30 +146,51 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-luxury p-4 hover:shadow-xl transition-all duration-300 group relative"
             >
+              {/* Wishlist Heart Icon - Top Right */}
+              <button
+                onClick={(e) => handleWishlistToggle(e, p)}
+                className="absolute top-6 right-6 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:scale-110 transition-all"
+              >
+                <Heart
+                  className={`w-5 h-5 transition-all ${
+                    isInWishlist(p.id)
+                      ? "fill-brand-primary stroke-brand-primary"
+                      : "stroke-gray-800 fill-none"
+                  }`}
+                />
+              </button>
+
               <Link href={`/product/${p.id}`}>
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-luxury p-4 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group">
-                  <div className="relative overflow-hidden rounded-xl">
-                    <Image
-                      src={p.image_url}
-                      alt={p.name}
-                      width={800}
-                      height={800}
-                      className="rounded-xl object-cover h-[300px] sm:h-[350px] md:h-[400px] w-full group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="mt-3 text-center">
-                    <h3 className="font-display text-base md:text-lg text-brand-text group-hover:text-brand-primary transition-colors">
-                      {p.name}
-                    </h3>
-                    {p.price != null && (
-                      <p className="text-brand-accent font-medium text-sm md:text-base mt-1">
-                        ₹{p.price}
-                      </p>
-                    )}
-                  </div>
+                <div className="relative overflow-hidden rounded-xl">
+                  <Image
+                    src={p.image_url}
+                    alt={p.name}
+                    width={800}
+                    height={800}
+                    className="rounded-xl object-cover h-[300px] sm:h-[350px] md:h-[400px] w-full group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <div className="mt-3 text-center">
+                  <h3 className="font-display text-base md:text-lg text-brand-text group-hover:text-brand-primary transition-colors">
+                    {p.name}
+                  </h3>
+                  {p.price != null && (
+                    <p className="text-brand-accent font-medium text-sm md:text-base mt-1">
+                      ₹{p.price}
+                    </p>
+                  )}
                 </div>
               </Link>
+
+              {/* Add to Cart Button */}
+              <button
+                onClick={(e) => handleAddToCart(e, p)}
+                className="mt-3 w-full py-2 px-4 rounded-full text-sm font-medium transition-all bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
+              >
+                Add to Cart
+              </button>
             </motion.div>
           ))}
         </section>
@@ -178,7 +211,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href="https://wa.me/919XXXXXXXXX"
+              href="https://wa.me/4809522965"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all hover:scale-105"
