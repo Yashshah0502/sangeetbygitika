@@ -19,7 +19,7 @@ export default function Navbar() {
         </Link>
         <Link
           href="/cart"
-          className="relative flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full bg-gradient-to-r from-brand-primary/10 to-brand-accent/10 hover:from-brand-primary/20 hover:to-brand-accent/20 transition-all hover:scale-105"
+          className="relative flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full bg-linear-to-r from-brand-primary/10 to-brand-accent/10 hover:from-brand-primary/20 hover:to-brand-accent/20 transition-all hover:scale-105"
         >
           <span className="text-xl">🛍</span>
           <span className="font-medium text-brand-text text-sm md:text-base">Wishlist</span>

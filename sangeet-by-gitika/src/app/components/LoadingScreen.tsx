@@ -20,7 +20,7 @@ export default function LoadingScreen() {
     <AnimatePresence>
       {isLoading && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-brand-bg to-brand-hover-to"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-linear-to-br from-brand-bg to-brand-hover-to"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}

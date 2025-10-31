@@ -2,6 +2,7 @@
 import ProductForm from "./components/ProductForm";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase/client";
+import AuthCheck from "./components/AuthCheck";
 
 type Product = {
   id: string;
@@ -26,20 +27,22 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-sangeet-cream text-charcoal py-10">
-      <h1 className="text-center text-3xl font-display text-sangeet-gold mb-6">
-        Admin Dashboard
-      </h1>
-      <ProductForm />
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-8 mt-10">
-        {products.map((p) => (
-          <div key={p.id} className="bg-white rounded-2xl shadow-luxury p-4 text-center">
-            <img src={p.image_url} alt={p.name} className="rounded-xl w-full h-64 object-cover" />
-            <h3 className="mt-2 font-display">{p.name}</h3>
-            <p className="text-sangeet-gold font-medium">₹{p.price}</p>
-          </div>
-        ))}
-      </section>
-    </main>
+    <AuthCheck>
+      <main className="min-h-screen bg-sangeet-cream text-charcoal py-10">
+        <h1 className="text-center text-3xl font-display text-sangeet-gold mb-6">
+          Add New Product
+        </h1>
+        <ProductForm />
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-8 mt-10">
+          {products.map((p) => (
+            <div key={p.id} className="bg-white rounded-2xl shadow-luxury p-4 text-center">
+              <img src={p.image_url} alt={p.name} className="rounded-xl w-full h-64 object-cover" />
+              <h3 className="mt-2 font-display">{p.name}</h3>
+              <p className="text-sangeet-gold font-medium">₹{p.price}</p>
+            </div>
+          ))}
+        </section>
+      </main>
+    </AuthCheck>
   );
 }

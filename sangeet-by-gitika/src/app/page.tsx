@@ -187,7 +187,7 @@ export default function Home() {
               {/* Add to Cart Button */}
               <button
                 onClick={(e) => handleAddToCart(e, p)}
-                className="mt-3 w-full py-2 px-4 rounded-full text-sm font-medium transition-all bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
+                className="mt-3 w-full py-2 px-4 rounded-full text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
               >
                 Add to Cart
               </button>
@@ -201,7 +201,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mx-6 mb-20 p-8 md:p-12 bg-gradient-to-br from-brand-hover-from to-brand-hover-to rounded-3xl shadow-luxury text-center"
+          className="mx-6 mb-20 p-8 md:p-12 bg-linear-to-br from-brand-hover-from to-brand-hover-to rounded-3xl shadow-luxury text-center"
         >
           <h2 className="font-display text-2xl md:text-3xl text-brand-text mb-4">
             Get in Touch 💌

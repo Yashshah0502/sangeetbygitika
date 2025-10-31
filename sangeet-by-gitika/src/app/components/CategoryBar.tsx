@@ -25,7 +25,7 @@ export default function CategoryBar() {
             >
               <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-sm group-hover:shadow-md transition-all overflow-hidden border-2 border-transparent group-hover:border-brand-primary/30">
                 {/* Placeholder circle - replace with actual images when available */}
-                <div className="w-full h-full bg-gradient-to-br from-brand-hover-from to-brand-hover-to flex items-center justify-center">
+                <div className="w-full h-full bg-linear-to-br from-brand-hover-from to-brand-hover-to flex items-center justify-center">
                   <span className="text-2xl">
                     {category.name.charAt(0)}
                   </span>

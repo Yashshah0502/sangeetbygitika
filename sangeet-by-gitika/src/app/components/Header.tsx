@@ -119,7 +119,7 @@ export default function Header() {
                     key={cat.name}
                     href={cat.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className="block py-3 px-4 rounded-lg text-brand-text hover:bg-gradient-to-r hover:from-brand-hover-from hover:to-brand-hover-to hover:text-brand-primary transition-all"
+                    className="block py-3 px-4 rounded-lg text-brand-text hover:bg-linear-to-r hover:from-brand-hover-from hover:to-brand-hover-to hover:text-brand-primary transition-all"
                   >
                     {cat.name}
                   </Link>
@@ -127,7 +127,7 @@ export default function Header() {
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block py-3 px-4 rounded-lg font-medium text-brand-primary hover:bg-gradient-to-r hover:from-brand-hover-from hover:to-brand-hover-to transition-all"
+                  className="block py-3 px-4 rounded-lg font-medium text-brand-primary hover:bg-linear-to-r hover:from-brand-hover-from hover:to-brand-hover-to transition-all"
                 >
                   All Products
                 </Link>

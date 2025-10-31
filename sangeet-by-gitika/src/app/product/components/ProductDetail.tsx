@@ -70,7 +70,7 @@ export default function ProductDetail({ product }: { product: Product }) {
               className={`mt-6 w-full py-3 px-6 rounded-full font-medium transition-all ${
                 isInCart
                   ? "bg-brand-primary/20 text-brand-primary cursor-not-allowed"
-                  : "bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
+                  : "bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
               }`}
             >
               {isInCart ? "💕 Added to Wishlist" : "Add to Wishlist 💕"}
@@ -82,7 +82,7 @@ export default function ProductDetail({ product }: { product: Product }) {
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-gradient-to-r from-brand-primary to-brand-accent text-white px-6 py-3 rounded-full hover:opacity-90 hover:scale-105 transition-all shadow-md"
+                className="flex items-center justify-center gap-2 bg-linear-to-r from-brand-primary to-brand-accent text-white px-6 py-3 rounded-full hover:opacity-90 hover:scale-105 transition-all shadow-md"
               >
                 <span className="text-xl">🛍</span>
                 <span className="font-medium">Order via WhatsApp</span>
@@ -100,7 +100,7 @@ export default function ProductDetail({ product }: { product: Product }) {
 
             {/* Product Details */}
             {product.category && (
-              <div className="mt-8 p-4 bg-gradient-to-br from-brand-hover-from/50 to-brand-hover-to/50 rounded-xl">
+              <div className="mt-8 p-4 bg-linear-to-br from-brand-hover-from/50 to-brand-hover-to/50 rounded-xl">
                 <p className="text-sm text-brand-text/70">
                   <span className="font-medium text-brand-text">Category:</span>{" "}
                   <span className="capitalize">{product.category}</span>

@@ -38,7 +38,7 @@ export default function WishlistPage() {
             </p>
             <Link
               href="/"
-              className="inline-block px-8 py-3 bg-gradient-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 hover:scale-105 transition-all"
+              className="inline-block px-8 py-3 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 hover:scale-105 transition-all"
             >
               Browse Products
             </Link>
@@ -93,7 +93,7 @@ export default function WishlistPage() {
                   {/* Add to Cart Button */}
                   <button
                     onClick={() => handleAddToCart(item)}
-                    className="mt-3 px-6 py-2 bg-gradient-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 hover:scale-105 transition-all text-sm font-medium"
+                    className="mt-3 px-6 py-2 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 hover:scale-105 transition-all text-sm font-medium"
                   >
                     Add to Cart
                   </button>

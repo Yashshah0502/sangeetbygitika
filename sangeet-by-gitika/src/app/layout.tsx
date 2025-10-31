@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Inter } from "next/font/google";
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,7 +43,26 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${inter.variable} antialiased`}
       >
         <WishlistProvider>
-          <CartProvider>{children}</CartProvider>
+          <CartProvider>
+            {children}
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: "#fff",
+                  color: "#333",
+                  border: "1px solid #D4AF37",
+                },
+                success: {
+                  iconTheme: {
+                    primary: "#D4AF37",
+                    secondary: "#fff",
+                  },
+                },
+              }}
+            />
+          </CartProvider>
         </WishlistProvider>
       </body>
     </html>

@@ -38,7 +38,7 @@ export default function CartPage() {
             </p>
             <Link
               href="/"
-              className="inline-block px-8 py-3 bg-gradient-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 hover:scale-105 transition-all"
+              className="inline-block px-8 py-3 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 hover:scale-105 transition-all"
             >
               Browse Products
             </Link>
@@ -123,7 +123,7 @@ export default function CartPage() {
         </div>
 
         {/* Total & Actions */}
-        <div className="bg-gradient-to-br from-brand-hover-from to-brand-hover-to rounded-3xl p-6 md:p-8 shadow-luxury">
+        <div className="bg-linear-to-br from-brand-hover-from to-brand-hover-to rounded-3xl p-6 md:p-8 shadow-luxury">
           <div className="flex justify-between items-center mb-6">
             <span className="font-display text-xl md:text-2xl text-brand-text">
               Total
@@ -136,7 +136,7 @@ export default function CartPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleWhatsAppShare}
-              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-brand-primary to-brand-accent text-white px-6 py-4 rounded-full hover:opacity-90 hover:scale-105 transition-all shadow-md font-medium"
+              className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-brand-primary to-brand-accent text-white px-6 py-4 rounded-full hover:opacity-90 hover:scale-105 transition-all shadow-md font-medium"
             >
               <span className="text-xl">💬</span>
               <span>Send to WhatsApp</span>
