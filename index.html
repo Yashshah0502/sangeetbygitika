@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="mediaqueries.css" />
   </head>
   <body>
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+
+    <!-- Dark Mode Toggle -->
+    <button
+      class="dark-mode-toggle"
+      id="darkModeToggle"
+      title="Toggle Dark Mode"
+    ></button>
+
     <nav id="desktop-nav">
       <div class="logo">Yash Shah</div>
       <div>
@@ -38,12 +48,12 @@
       </div>
     </nav>
     <section id="profile">
-      <div class="section__pic-container">
-        <img src="./assets/profile-pic.png" alt="John Doe profile picture" />
+      <div class="section__pic-container slide-in-left">
+        <img src="./assets/profile-pic.png" alt="Yash Shah profile picture" />
       </div>
-      <div class="section__text">
+      <div class="section__text slide-in-right">
         <p class="section__text__p1">Hello, I'm</p>
-        <h1 class="title">Yash Shah</h1>
+        <h1 class="title gradient-text">Yash Shah</h1>
         <p class="section__text__p2">Data Analyst</p>
         <div class="btn-container">
           <button
@@ -250,7 +260,7 @@
                   class="icon"
                 />
                 <div>
-                  <h3>Data Modeling & Integration </h3>
+                  <h3>Data Modeling & Integration</h3>
                   <p>Intermediate</p>
                 </div>
               </article>
@@ -265,7 +275,6 @@
         onclick="location.href='./#projects'"
       />
     </section>
-
 
     <section id="experience">
       <h1 class="title">
@@ -322,125 +331,191 @@
       </div>
     </section>
 
-
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Projects</title>
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-      <section id="projects">
-        <p class="section__text__p1">Browse My Recent</p>
-        <h1 class="title">Projects</h1>
-        <div class="projects-container">
-            <!-- First Row -->
-            <div class="projects-row">
-                <!-- Project One -->
-                <div class="details-container color-container">
-                    <div class="project-center">
-                        <h3 class="experience-title">Stock Market Prediction</h3>
-                        <h4 class="company-title">Data Science Project</h4>
-                        <p class="experience-dates">Machine Learning</p>
-                        <div class="btn-container">
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'" target="_blank">Github</button>
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='stock-market-prediction.html'">More Info</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Project Two -->
-                <div class="details-container color-container">
-                    <div class="project-center">
-                        <h3 class="experience-title">Sales Data Analysis</h3>
-                        <h4 class="company-title">Business Intelligence</h4>
-                        <p class="experience-dates">Data Visualization</p>
-                        <div class="btn-container">
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'">Github</button>
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='sales-data-analysis.html'">More Info</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Project Three -->
-                <div class="details-container color-container">
-                    <div class="project-center">
-                        <h3 class="experience-title">Chatbot Development</h3>
-                        <h4 class="company-title">AI & NLP</h4>
-                        <p class="experience-dates">Machine Learning</p>
-                        <div class="btn-container">
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'">Github</button>
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='chatbot-development.html'">More Info</button>
-                        </div>
-                    </div>
-                </div>
+    <section id="projects">
+      <p class="section__text__p1">Browse My Recent</p>
+      <h1 class="title">Projects</h1>
+      <div class="projects-container">
+        <!-- First Row -->
+        <div class="projects-row">
+          <!-- Project One -->
+          <div class="details-container color-container">
+            <div class="project-center">
+              <h3 class="experience-title">Stock Market Prediction</h3>
+              <h4 class="company-title">Data Science Project</h4>
+              <p class="experience-dates">Machine Learning</p>
+              <div class="btn-container">
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='https://github.com/'"
+                  target="_blank"
+                >
+                  Github
+                </button>
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='stock-market-prediction.html'"
+                >
+                  More Info
+                </button>
+              </div>
             </div>
-            <!-- Second Row -->
-            <div class="projects-row">
-                <!-- Project Four -->
-                <div class="details-container color-container">
-                    <div class="project-center">
-                        <h3 class="experience-title">Data Visualization</h3>
-                        <h4 class="company-title">Interactive Dashboards</h4>
-                        <p class="experience-dates">Power BI & Tableau</p>
-                        <div class="btn-container">
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'">Github</button>
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='data-visualization.html'">More Info</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Project Five -->
-                <div class="details-container color-container">
-                    <div class="project-center">
-                        <h3 class="experience-title">Machine Learning Model</h3>
-                        <h4 class="company-title">Predictive Analytics</h4>
-                        <p class="experience-dates">Python & Scikit-learn</p>
-                        <div class="btn-container">
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'">Github</button>
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='machine-learning.html'">More Info</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Project Six -->
-                <div class="details-container color-container">
-                    <div class="project-center">
-                        <h3 class="experience-title">SQL Database Project</h3>
-                        <h4 class="company-title">Database Management</h4>
-                        <p class="experience-dates">Database Design</p>
-                        <div class="btn-container">
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/'">Github</button>
-                            <button class="btn btn-color-2 project-btn" onclick="location.href='sql-project.html'">More Info</button>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <!-- Project Two -->
+          <div class="details-container color-container">
+            <div class="project-center">
+              <h3 class="experience-title">Sales Data Analysis</h3>
+              <h4 class="company-title">Business Intelligence</h4>
+              <p class="experience-dates">Data Visualization</p>
+              <div class="btn-container">
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='https://github.com/'"
+                >
+                  Github
+                </button>
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='sales-data-analysis.html'"
+                >
+                  More Info
+                </button>
+              </div>
             </div>
+          </div>
+          <!-- Project Three -->
+          <div class="details-container color-container">
+            <div class="project-center">
+              <h3 class="experience-title">Chatbot Development</h3>
+              <h4 class="company-title">AI & NLP</h4>
+              <p class="experience-dates">Machine Learning</p>
+              <div class="btn-container">
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='https://github.com/'"
+                >
+                  Github
+                </button>
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='chatbot-development.html'"
+                >
+                  More Info
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <img src="./assets/arrow.png" alt="Arrow icon" class="icon arrow" onclick="location.href='./#contact'">
+        <!-- Second Row -->
+        <div class="projects-row">
+          <!-- Project Four -->
+          <div class="details-container color-container">
+            <div class="project-center">
+              <h3 class="experience-title">Data Visualization</h3>
+              <h4 class="company-title">Interactive Dashboards</h4>
+              <p class="experience-dates">Power BI & Tableau</p>
+              <div class="btn-container">
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='https://github.com/'"
+                >
+                  Github
+                </button>
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='data-visualization.html'"
+                >
+                  More Info
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Project Five -->
+          <div class="details-container color-container">
+            <div class="project-center">
+              <h3 class="experience-title">Machine Learning Model</h3>
+              <h4 class="company-title">Predictive Analytics</h4>
+              <p class="experience-dates">Python & Scikit-learn</p>
+              <div class="btn-container">
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='https://github.com/'"
+                >
+                  Github
+                </button>
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='machine-learning.html'"
+                >
+                  More Info
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Project Six -->
+          <div class="details-container color-container">
+            <div class="project-center">
+              <h3 class="experience-title">SQL Database Project</h3>
+              <h4 class="company-title">Database Management</h4>
+              <p class="experience-dates">Database Design</p>
+              <div class="btn-container">
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='https://github.com/'"
+                >
+                  Github
+                </button>
+                <button
+                  class="btn btn-color-2 project-btn"
+                  onclick="location.href='sql-project.html'"
+                >
+                  More Info
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <img
+        src="./assets/arrow.png"
+        alt="Arrow icon"
+        class="icon arrow"
+        onclick="location.href='./#contact'"
+      />
     </section>
-        <img src="./assets/arrow.png" alt="Arrow icon" class="icon arrow" onclick="location.href='./#contact'">
-    </section>
-    </body>
-    </html>
-    
 
- 
     <section id="contact">
       <p class="section__text__p1">Get in Touch</p>
       <h1 class="title">Contact Us</h1>
-    
+
       <div class="contact-container">
         <!-- Left Side: Email and LinkedIn -->
         <div class="contact-info-left">
           <div class="contact-info-container">
-            <img src="./assets/email.png" alt="Email icon" class="icon contact-icon email-icon" />
-            <p><a href="mailto:yshah43@asu.edu" class="contact-link">yshah43@asu.edu</a></p>
+            <img
+              src="./assets/email.png"
+              alt="Email icon"
+              class="icon contact-icon email-icon"
+            />
+            <p>
+              <a href="mailto:yshah43@asu.edu" class="contact-link"
+                >yshah43@asu.edu</a
+              >
+            </p>
           </div>
           <div class="contact-info-container">
-            <img src="./assets/linkedin.png" alt="LinkedIn icon" class="icon contact-icon" />
-            <p><a href="https://www.linkedin.com" class="contact-link">LinkedIn</a></p>
+            <img
+              src="./assets/linkedin.png"
+              alt="LinkedIn icon"
+              class="icon contact-icon"
+            />
+            <p>
+              <a href="https://www.linkedin.com" class="contact-link"
+                >LinkedIn</a
+              >
+            </p>
           </div>
         </div>
-    
+
         <!-- Right Side: Contact Form -->
         <div class="contact-form-container">
           <h2>Let’s Connect</h2>
@@ -462,20 +537,22 @@
         </div>
       </div>
     </section>
-    
-<!-- Bottom Line -->
-<div class="bottom-line"></div>
 
-<!-- Footer Navigation -->
-<footer>
-  <nav class="footer-nav">
-    <ul class="footer-nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#Skills">Skills</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
-  <p>© Yash Shah | All rights reserved</p>
-</footer>
+    <!-- Bottom Line -->
+    <div class="bottom-line"></div>
+
+    <!-- Footer Navigation -->
+    <footer>
+      <nav class="footer-nav">
+        <ul class="footer-nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#Skills">Skills</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <p>© Yash Shah | All rights reserved</p>
+    </footer>
+  </body>
+</html>
