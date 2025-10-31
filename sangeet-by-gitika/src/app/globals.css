@@ -1,38 +1,36 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #ffffff;
-  --color-foreground: #171717;
+  --color-background: #fff6fb;
+  --color-foreground: #3a2e3f;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Sangeet Custom Colors */
-  --color-sangeet-gold: #D4AF37;
-  --color-sangeet-cream: #F5F5DC;
-  --color-charcoal: #36454F;
+  /* Lavender-Pink Brand Colors */
+  --color-brand-bg: #fff6fb;
+  --color-brand-primary: #d6a8e9;
+  --color-brand-accent: #f7b3d0;
+  --color-brand-text: #3a2e3f;
+  --color-brand-hover-from: #eac7f9;
+  --color-brand-hover-to: #fbd3e9;
 
   /* Custom Fonts */
   --font-display: var(--font-playfair);
   --font-body: var(--font-inter);
 
   /* Custom Shadows */
-  --shadow-luxury: 0 10px 40px rgba(212, 175, 55, 0.1);
+  --shadow-luxury: 0 10px 40px rgba(214, 168, 233, 0.15);
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #fff6fb;
+  --foreground: #3a2e3f;
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(135deg, #fff6fb 0%, #fef0f8 100%);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
 }
