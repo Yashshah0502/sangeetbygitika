@@ -2,7 +2,7 @@ export default function StructuredData() {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Sangeet by Gitika",
+    name: "SanGeet by Gitika",
     url: "https://sangeetbygitika.com",
     logo: "https://sangeetbygitika.com/logo.png",
     description: "Luxury handcrafted bags and accessories for the modern woman",
@@ -20,7 +20,7 @@ export default function StructuredData() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Sangeet by Gitika",
+    name: "SanGeet by Gitika",
     url: "https://sangeetbygitika.com",
     potentialAction: {
       "@type": "SearchAction",

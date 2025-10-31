@@ -72,15 +72,15 @@ export default function ProductCard({
       whileHover={{ scale: 1.03, y: -8 }}
       onHoverStart={() => setIsHovering(true)}
       onHoverEnd={() => setIsHovering(false)}
-      className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-luxury p-4 hover:shadow-2xl transition-all duration-300 group relative"
+      className="bg-white/80 backdrop-blur-sm rounded-lg md:rounded-2xl shadow-luxury p-2 md:p-4 hover:shadow-2xl transition-all duration-300 group relative"
     >
       {/* Wishlist Heart Icon - Top Right */}
       <button
         onClick={onToggleWishlist}
-        className="absolute top-6 right-6 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:scale-110 transition-all"
+        className="absolute top-3 right-3 md:top-6 md:right-6 z-10 p-1.5 md:p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:scale-110 transition-all"
       >
         <Heart
-          className={`w-5 h-5 transition-all ${
+          className={`w-4 h-4 md:w-5 md:h-5 transition-all ${
             isInWishlist
               ? "fill-brand-primary stroke-brand-primary"
               : "stroke-gray-800 fill-none"
@@ -90,13 +90,13 @@ export default function ProductCard({
 
       {/* Image indicators for multiple images */}
       {images.length > 1 && (
-        <div className="absolute top-6 left-6 z-10 flex gap-1">
+        <div className="absolute top-3 left-3 md:top-6 md:left-6 z-10 flex gap-1">
           {images.map((_, idx) => (
             <div
               key={idx}
-              className={`w-1.5 h-1.5 rounded-full transition-all ${
+              className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full transition-all ${
                 idx === currentImageIndex
-                  ? "bg-brand-primary w-4"
+                  ? "bg-brand-primary w-3 md:w-4"
                   : "bg-white/60"
               }`}
             />
@@ -105,21 +105,21 @@ export default function ProductCard({
       )}
 
       <Link href={`/product/${product.id}`}>
-        <div className="relative overflow-hidden rounded-xl">
+        <div className="relative overflow-hidden rounded-lg md:rounded-xl">
           <Image
             src={images[currentImageIndex]}
             alt={product.name}
             width={800}
             height={800}
-            className="rounded-xl object-cover h-[300px] sm:h-[350px] md:h-[400px] w-full group-hover:scale-110 transition-transform duration-500"
+            className="rounded-lg md:rounded-xl object-cover h-[120px] sm:h-[200px] md:h-[300px] lg:h-[400px] w-full group-hover:scale-110 transition-transform duration-500"
           />
         </div>
-        <div className="mt-3 text-center">
-          <h3 className="font-display text-base md:text-lg text-brand-text group-hover:text-brand-primary transition-colors">
+        <div className="mt-2 md:mt-3 text-center">
+          <h3 className="font-display text-xs sm:text-sm md:text-base lg:text-lg text-brand-text group-hover:text-brand-primary transition-colors line-clamp-2">
             {product.name}
           </h3>
           {product.price != null && (
-            <p className="text-brand-accent font-medium text-sm md:text-base mt-1">
+            <p className="text-brand-accent font-medium text-xs sm:text-sm md:text-base mt-0.5 md:mt-1">
               ₹{product.price}
             </p>
           )}
@@ -130,22 +130,22 @@ export default function ProductCard({
       {cartQuantity === 0 ? (
         <button
           onClick={onAddToCart}
-          className="mt-3 w-full py-2 px-4 rounded-full text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
+          className="mt-2 md:mt-3 w-full py-1.5 md:py-2 px-2 md:px-4 rounded-full text-xs md:text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
         >
           Add to Wishlist
         </button>
       ) : (
-        <div className="mt-3 flex items-center justify-center gap-3 bg-white/60 backdrop-blur-sm rounded-full p-2 border-2 border-brand-primary">
+        <div className="mt-2 md:mt-3 flex items-center justify-center gap-2 md:gap-3 bg-white/60 backdrop-blur-sm rounded-full p-1 md:p-2 border-2 border-brand-primary">
           <button
             onClick={(e) => {
               e.preventDefault();
               onUpdateQuantity(product.id, cartQuantity - 1);
             }}
-            className="w-8 h-8 rounded-full bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary font-bold transition-colors flex items-center justify-center"
+            className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary font-bold transition-colors flex items-center justify-center text-xs md:text-base"
           >
             −
           </button>
-          <span className="font-medium text-brand-text min-w-[2rem] text-center">
+          <span className="font-medium text-brand-text min-w-[1.5rem] md:min-w-[2rem] text-center text-xs md:text-base">
             {cartQuantity}
           </span>
           <button
@@ -153,7 +153,7 @@ export default function ProductCard({
               e.preventDefault();
               onUpdateQuantity(product.id, cartQuantity + 1);
             }}
-            className="w-8 h-8 rounded-full bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary font-bold transition-colors flex items-center justify-center"
+            className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary font-bold transition-colors flex items-center justify-center text-xs md:text-base"
           >
             +
           </button>

@@ -1,4 +1,4 @@
-# Sangeet by Gitika - Enhancement Guide
+# SanGeet by Gitika - Enhancement Guide
 
 ## ✅ Already Implemented
 
@@ -162,18 +162,18 @@ Update `/src/app/layout.tsx`:
 
 ```tsx
 export const metadata: Metadata = {
-  title: "Sangeet by Gitika - Luxury Handcrafted Bags & Accessories",
+  title: "SanGeet by Gitika - Luxury Handcrafted Bags & Accessories",
   description: "Discover exquisite handcrafted bags, potlis, and accessories. Premium quality, elegant designs for the modern woman.",
-  keywords: "luxury bags, handcrafted accessories, potli bags, designer handbags, Sangeet by Gitika",
+  keywords: "luxury bags, handcrafted accessories, potli bags, designer handbags, SanGeet by Gitika",
   openGraph: {
-    title: "Sangeet by Gitika - Luxury Handcrafted Bags",
+    title: "SanGeet by Gitika - Luxury Handcrafted Bags",
     description: "Exquisite handcrafted bags and accessories",
     images: ["/og-image.jpg"],
     url: "https://sangeetbygitika.com",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sangeet by Gitika",
+    title: "SanGeet by Gitika",
     description: "Luxury handcrafted bags and accessories",
     images: ["/og-image.jpg"],
   },

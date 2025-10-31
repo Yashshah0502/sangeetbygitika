@@ -23,10 +23,17 @@ type Product = {
   created_at: string;
 };
 
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
 const ITEMS_PER_PAGE = 16;
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
@@ -43,20 +50,29 @@ export default function Home() {
   });
 
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchData() {
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
-      const { data } = await supabase
+
+      // Fetch products
+      const { data: productsData } = await supabase
         .from("products")
         .select("id,name,price,image_url,image_urls,category,created_at")
         .eq("is_available", true);
 
-      setProducts(data || []);
-      setFilteredProducts(data || []);
+      // Fetch categories
+      const { data: categoriesData } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+
+      setProducts(productsData || []);
+      setFilteredProducts(productsData || []);
+      setCategories(categoriesData || []);
     }
-    fetchProducts();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -169,12 +185,11 @@ export default function Home() {
               className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:border-brand-primary transition hover:border-gray-300"
             >
               <option>All</option>
-              <option>Tote</option>
-              <option>Clutch</option>
-              <option>Potli</option>
-              <option>Sling</option>
-              <option>Handbag</option>
-              <option>Accessories</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -193,7 +208,7 @@ export default function Home() {
         </motion.div>
 
         {/* Product Grid */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 px-6 pb-20">
+        <section className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8 px-3 md:px-6 pb-20">
           {displayedProducts.length === 0 && filteredProducts.length === 0 ? (
             <div className="col-span-full text-center py-20">
               <motion.div
@@ -300,7 +315,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="text-center text-xs md:text-sm text-brand-text/50 pb-8">
-          © 2025 Sangeet by Gitika
+          © 2025 SanGeet by Gitika
         </footer>
       </main>
     </>

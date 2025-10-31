@@ -5,8 +5,15 @@ import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Search, Heart, ShoppingBag, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+};
 
 export default function Header() {
   const { totalItems } = useCart();
@@ -14,16 +21,28 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
 
-  const categories = [
-    { name: "Tote", href: "/category/tote" },
-    { name: "Clutch", href: "/category/clutch" },
-    { name: "Potli", href: "/category/potli" },
-    { name: "Sling", href: "/category/sling" },
-    { name: "Handbag", href: "/category/handbag" },
-    { name: "Accessories", href: "/category/accessories" },
-  ];
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  async function fetchCategories() {
+    const { data } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name");
+
+    if (data) {
+      setCategories(data);
+    }
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +74,7 @@ export default function Header() {
           {/* Center: Brand */}
           <Link href="/" className="flex flex-col items-center">
             <h1 className="font-display text-2xl md:text-3xl text-brand-primary">
-              Sangeet by Gitika
+              SanGeet by Gitika
             </h1>
             <p className="text-xs text-brand-text/60 hidden sm:block">
               Premium Handbags & Accessories
@@ -166,8 +185,8 @@ export default function Header() {
               <nav className="space-y-4">
                 {categories.map((cat) => (
                   <Link
-                    key={cat.name}
-                    href={cat.href}
+                    key={cat.id}
+                    href={`/category/${cat.slug}`}
                     onClick={() => setIsMenuOpen(false)}
                     className="block py-3 px-4 rounded-lg text-brand-text hover:bg-linear-to-r hover:from-brand-hover-from hover:to-brand-hover-to hover:text-brand-primary transition-all"
                   >

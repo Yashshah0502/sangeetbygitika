@@ -29,12 +29,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Sangeet by Gitika - Luxury Handcrafted Bags & Accessories",
+  title: "SanGeet by Gitika - Luxury Handcrafted Bags & Accessories",
   description: "Discover exquisite handcrafted bags, potlis, clutches, and accessories. Premium quality, elegant designs for the modern woman. Shop totes, slings, handbags & more.",
-  keywords: "luxury bags, handcrafted accessories, potli bags, designer handbags, clutch bags, tote bags, sling bags, Sangeet by Gitika, premium handbags, handmade bags",
-  authors: [{ name: "Sangeet by Gitika" }],
-  creator: "Sangeet by Gitika",
-  publisher: "Sangeet by Gitika",
+  keywords: "luxury bags, handcrafted accessories, potli bags, designer handbags, clutch bags, tote bags, sling bags, SanGeet by Gitika, premium handbags, handmade bags",
+  authors: [{ name: "SanGeet by Gitika" }],
+  creator: "SanGeet by Gitika",
+  publisher: "SanGeet by Gitika",
   formatDetection: {
     telephone: false,
   },
@@ -46,21 +46,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://sangeetbygitika.com",
-    title: "Sangeet by Gitika - Luxury Handcrafted Bags",
+    title: "SanGeet by Gitika - Luxury Handcrafted Bags",
     description: "Exquisite handcrafted bags and accessories for the modern woman. Premium quality, elegant designs.",
-    siteName: "Sangeet by Gitika",
+    siteName: "SanGeet by Gitika",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Sangeet by Gitika - Luxury Handbags",
+        alt: "SanGeet by Gitika - Luxury Handbags",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sangeet by Gitika - Luxury Handcrafted Bags",
+    title: "SanGeet by Gitika - Luxury Handcrafted Bags",
     description: "Exquisite handcrafted bags and accessories for the modern woman",
     images: ["/og-image.jpg"],
   },

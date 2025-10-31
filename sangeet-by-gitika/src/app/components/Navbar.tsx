@@ -15,7 +15,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <Link href="/" className="font-display text-2xl md:text-3xl text-brand-primary hover:text-brand-accent transition-colors">
-          Sangeet by Gitika
+          SanGeet by Gitika
         </Link>
         <Link
           href="/cart"

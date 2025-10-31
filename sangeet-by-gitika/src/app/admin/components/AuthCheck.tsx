@@ -71,7 +71,7 @@ export default function AuthCheck({ children }: Props) {
         <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <h2 className="font-display text-lg text-brand-primary">
-              Sangeet by Gitika Admin
+              SanGeet by Gitika Admin
             </h2>
             <div className="flex gap-2 text-sm">
               <a
@@ -85,6 +85,12 @@ export default function AuthCheck({ children }: Props) {
                 className="px-3 py-1 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
               >
                 Products
+              </a>
+              <a
+                href="/admin/categories"
+                className="px-3 py-1 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+              >
+                Categories
               </a>
               <a
                 href="/admin/analytics"
