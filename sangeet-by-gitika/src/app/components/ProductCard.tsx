@@ -19,7 +19,9 @@ type ProductCardProps = {
   product: Product;
   index: number;
   isInWishlist: boolean;
+  cartQuantity: number;
   onAddToCart: (e: React.MouseEvent) => void;
+  onUpdateQuantity: (id: string, quantity: number) => void;
   onToggleWishlist: (e: React.MouseEvent) => void;
 };
 
@@ -27,7 +29,9 @@ export default function ProductCard({
   product,
   index,
   isInWishlist,
+  cartQuantity,
   onAddToCart,
+  onUpdateQuantity,
   onToggleWishlist,
 }: ProductCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -44,7 +48,7 @@ export default function ProductCard({
     if (isHovering && images.length > 1) {
       intervalRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 1000); // Change image every 1 second
+      }, 2500); // Change image every 2.5 seconds for smooth, elegant transitions
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -122,13 +126,39 @@ export default function ProductCard({
         </div>
       </Link>
 
-      {/* Add to Cart Button */}
-      <button
-        onClick={onAddToCart}
-        className="mt-3 w-full py-2 px-4 rounded-full text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
-      >
-        Add to Cart
-      </button>
+      {/* Add to Cart / Quantity Controls */}
+      {cartQuantity === 0 ? (
+        <button
+          onClick={onAddToCart}
+          className="mt-3 w-full py-2 px-4 rounded-full text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
+        >
+          Add to Wishlist
+        </button>
+      ) : (
+        <div className="mt-3 flex items-center justify-center gap-3 bg-white/60 backdrop-blur-sm rounded-full p-2 border-2 border-brand-primary">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              onUpdateQuantity(product.id, cartQuantity - 1);
+            }}
+            className="w-8 h-8 rounded-full bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary font-bold transition-colors flex items-center justify-center"
+          >
+            −
+          </button>
+          <span className="font-medium text-brand-text min-w-[2rem] text-center">
+            {cartQuantity}
+          </span>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              onUpdateQuantity(product.id, cartQuantity + 1);
+            }}
+            className="w-8 h-8 rounded-full bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary font-bold transition-colors flex items-center justify-center"
+          >
+            +
+          </button>
+        </div>
+      )}
     </motion.div>
   );
 }

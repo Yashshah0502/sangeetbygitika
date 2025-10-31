@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
@@ -9,7 +9,9 @@ import { useWishlist } from "@/contexts/WishlistContext";
 import LoadingScreen from "./components/LoadingScreen";
 import Header from "./components/Header";
 import ProductCard from "./components/ProductCard";
+import FloatingContactButton from "./components/FloatingContactButton";
 import { useSearchParams } from "next/navigation";
+import { useInView } from "react-intersection-observer";
 
 type Product = {
   id: string;
@@ -21,15 +23,24 @@ type Product = {
   created_at: string;
 };
 
+const ITEMS_PER_PAGE = 16;
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [filter, setFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
-  const { addToCart } = useCart();
+  const { addToCart, updateQuantity, cartItems } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
   const searchParams = useSearchParams();
   const searchQuery = searchParams?.get("search") || "";
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
 
   useEffect(() => {
     async function fetchProducts() {
@@ -40,8 +51,7 @@ export default function Home() {
       const { data } = await supabase
         .from("products")
         .select("id,name,price,image_url,image_urls,category,created_at")
-        .eq("is_available", true)
-        .limit(24);
+        .eq("is_available", true);
 
       setProducts(data || []);
       setFilteredProducts(data || []);
@@ -79,7 +89,25 @@ export default function Home() {
     }
 
     setFilteredProducts(result);
+    setPage(1); // Reset page when filters change
+    setHasMore(true);
   }, [filter, sortBy, products, searchQuery]);
+
+  // Load more products when scrolling
+  useEffect(() => {
+    const startIndex = 0;
+    const endIndex = page * ITEMS_PER_PAGE;
+    const newDisplayed = filteredProducts.slice(startIndex, endIndex);
+    setDisplayedProducts(newDisplayed);
+    setHasMore(endIndex < filteredProducts.length);
+  }, [filteredProducts, page]);
+
+  // Load more when in view
+  useEffect(() => {
+    if (inView && hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  }, [inView, hasMore]);
 
   const handleAddToCart = (e: React.MouseEvent, p: Product) => {
     e.preventDefault();
@@ -110,6 +138,7 @@ export default function Home() {
     <>
       <LoadingScreen />
       <Header />
+      <FloatingContactButton />
       <main className="min-h-screen text-brand-text">
         {/* Search Results Indicator */}
         {searchQuery && (
@@ -165,7 +194,7 @@ export default function Home() {
 
         {/* Product Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 px-6 pb-20">
-          {filteredProducts.length === 0 ? (
+          {displayedProducts.length === 0 && filteredProducts.length === 0 ? (
             <div className="col-span-full text-center py-20">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -193,16 +222,36 @@ export default function Home() {
               </motion.div>
             </div>
           ) : (
-            filteredProducts.map((p, index) => (
-              <ProductCard
-                key={p.id}
-                product={p}
-                index={index}
-                isInWishlist={isInWishlist(p.id)}
-                onAddToCart={(e) => handleAddToCart(e, p)}
-                onToggleWishlist={(e) => handleWishlistToggle(e, p)}
-              />
-            ))
+            <>
+              {displayedProducts.map((p, index) => {
+                const cartItem = cartItems.find(item => item.id === p.id);
+                const cartQuantity = cartItem ? cartItem.quantity : 0;
+
+                return (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    index={index}
+                    isInWishlist={isInWishlist(p.id)}
+                    cartQuantity={cartQuantity}
+                    onAddToCart={(e) => handleAddToCart(e, p)}
+                    onUpdateQuantity={updateQuantity}
+                    onToggleWishlist={(e) => handleWishlistToggle(e, p)}
+                  />
+                );
+              })}
+
+              {/* Infinite scroll trigger */}
+              {hasMore && (
+                <div ref={ref} className="col-span-full py-8 flex justify-center">
+                  <div className="flex items-center gap-2 text-brand-text/60">
+                    <div className="w-2 h-2 bg-brand-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </section>
 
