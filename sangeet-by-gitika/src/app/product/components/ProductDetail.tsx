@@ -39,7 +39,17 @@ export default function ProductDetail({ product }: { product: Product }) {
   const whatsappLink = `https://wa.me/918440866772?text=${encodeURIComponent(whatsappMessage)}`;
 
   const instagramMessage = `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
-  const instagramLink = `https://ig.me/m/sangeetbygitika?text=${encodeURIComponent(instagramMessage)}`;
+
+  const handleInstagramMessage = async () => {
+    try {
+      await navigator.clipboard.writeText(instagramMessage);
+      alert("Message copied to clipboard! Opening Instagram...");
+      window.open("https://ig.me/m/sangeetbygitika", "_blank");
+    } catch (err) {
+      alert("Please copy this message and send it on Instagram:\n\n" + instagramMessage);
+      window.open("https://ig.me/m/sangeetbygitika", "_blank");
+    }
+  };
 
   return (
     <main className="min-h-screen text-brand-text px-6 py-12">
@@ -90,15 +100,13 @@ export default function ProductDetail({ product }: { product: Product }) {
                 <span className="text-xl">🛍</span>
                 <span className="font-medium">Order via WhatsApp</span>
               </a>
-              <a
-                href={instagramLink}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={handleInstagramMessage}
                 className="flex items-center justify-center gap-2 bg-white border-2 border-brand-primary text-brand-primary px-6 py-3 rounded-full hover:bg-brand-primary hover:text-white hover:scale-105 transition-all shadow-md"
               >
                 <span className="text-xl">📸</span>
                 <span className="font-medium">Message on Instagram</span>
-              </a>
+              </button>
             </div>
 
             {/* Product Details */}

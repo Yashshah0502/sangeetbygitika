@@ -20,13 +20,19 @@ export default function CartPage() {
     window.open(whatsappLink, "_blank");
   };
 
-  const handleInstagramShare = () => {
+  const handleInstagramShare = async () => {
     const message = `Hi! I'm interested in these products:\n\n${cartItems
       .map((item, idx) => `${idx + 1}. ${item.name} (x${item.quantity}) – ₹${item.price * item.quantity}`)
       .join("\n")}\n\nTotal: ₹${totalPrice}`;
 
-    const instagramLink = `https://ig.me/m/sangeetbygitika?text=${encodeURIComponent(message)}`;
-    window.open(instagramLink, "_blank");
+    try {
+      await navigator.clipboard.writeText(message);
+      alert("Cart details copied to clipboard! Opening Instagram...");
+      window.open("https://ig.me/m/sangeetbygitika", "_blank");
+    } catch (err) {
+      alert("Please copy this message and send it on Instagram:\n\n" + message);
+      window.open("https://ig.me/m/sangeetbygitika", "_blank");
+    }
   };
 
   if (cartItems.length === 0) {
