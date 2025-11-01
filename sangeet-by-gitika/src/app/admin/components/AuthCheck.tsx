@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 type Props = {
   children: React.ReactNode;
@@ -10,43 +11,29 @@ type Props = {
 export default function AuthCheck({ children }: Props) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const [adminName, setAdminName] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    // The middleware already handles authentication
+    // If we're here, we're authenticated
+    setIsAuthenticated(true);
+    setIsChecking(false);
   }, []);
 
-  function checkAuth() {
-    if (typeof window === "undefined") return;
-
-    const isAuth = localStorage.getItem("admin_authenticated");
-    const authTime = localStorage.getItem("admin_auth_time");
-
-    if (isAuth === "true" && authTime) {
-      // Check if session is still valid (24 hours)
-      const authTimeMs = parseInt(authTime);
-      const now = new Date().getTime();
-      const hoursSinceAuth = (now - authTimeMs) / (1000 * 60 * 60);
-
-      if (hoursSinceAuth < 24) {
-        setIsAuthenticated(true);
-        setIsChecking(false);
-      } else {
-        // Session expired
-        localStorage.removeItem("admin_authenticated");
-        localStorage.removeItem("admin_auth_time");
-        router.push("/admin/login");
-      }
-    } else {
-      // Not authenticated
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
       router.push("/admin/login");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Still redirect to login even if API call fails
+      router.push("/admin/login");
+      router.refresh();
     }
-  }
-
-  function handleLogout() {
-    localStorage.removeItem("admin_authenticated");
-    localStorage.removeItem("admin_auth_time");
-    router.push("/admin/login");
   }
 
   if (isChecking) {
@@ -121,9 +108,10 @@ export default function AuthCheck({ children }: Props) {
             </a>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-sm font-medium"
             >
-              Logout
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
             </button>
           </div>
         </div>

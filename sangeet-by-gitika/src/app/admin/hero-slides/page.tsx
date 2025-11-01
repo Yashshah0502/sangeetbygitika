@@ -3,8 +3,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
 import toast from "react-hot-toast";
-import { Pencil, Trash2, X, Check, Upload, Eye, EyeOff, GripVertical } from "lucide-react";
+import { Pencil, Trash2, X, Check, Upload, Eye, EyeOff, GripVertical, ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface HeroSlide {
   id: string;
@@ -286,16 +287,26 @@ export default function HeroSlidesManagement() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8">Hero Slides Management</h1>
+      {/* Header with Back Button */}
+      <div className="flex items-center gap-4 mb-8">
+        <Link
+          href="/admin/dashboard"
+          className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-brand-primary hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back to Dashboard</span>
+        </Link>
+        {/* <h1 className="text-3xl font-bold">Hero Slides Management</h1> */}
+      </div>
 
       {/* Add New Slide Form */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 className="text-xl font-semibold mb-4">Add New Hero Slide</h2>
+        <h2 className="text-xl font-semibold mb-4">Add New Photos for the Slide</h2>
         <div className="space-y-4">
           {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Hero Image *
+              Slide Image *
             </label>
             <div className="flex items-start gap-4">
               <div className="flex-1">
