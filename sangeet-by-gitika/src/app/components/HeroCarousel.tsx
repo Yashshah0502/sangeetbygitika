@@ -5,28 +5,58 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/lib/supabase/client";
 
 interface HeroSlide {
   id: string;
-  image: string;
-  alt: string;
-  title?: string;
-  subtitle?: string;
-  cta?: string;
-  link?: string;
+  title: string;
+  subtitle: string | null;
+  button_text: string | null;
+  image_url: string;
+  category_slug: string | null;
+  display_order: number;
+  is_active: boolean;
 }
 
 interface HeroCarouselProps {
-  slides: HeroSlide[];
   autoPlayInterval?: number;
 }
 
 export default function HeroCarousel({
-  slides,
-  autoPlayInterval = 5000,
+  autoPlayInterval = 3000,
 }: HeroCarouselProps) {
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
+  const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
+
+  // Fetch slides from Supabase
+  useEffect(() => {
+    async function fetchSlides() {
+      try {
+        const { data, error } = await supabase
+          .from("hero_slides")
+          .select("*")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true })
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("Error fetching hero slides:", error);
+          setSlides([]);
+        } else {
+          setSlides(data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching hero slides:", error);
+        setSlides([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSlides();
+  }, []);
 
   // Auto-play functionality
   useEffect(() => {
@@ -51,11 +81,22 @@ export default function HeroCarousel({
     setCurrent((prev) => (prev + 1) % slides.length);
   };
 
+  if (loading) {
+    return (
+      <div className="relative w-full h-[60vh] md:h-[70vh] lg:h-[80vh] bg-gradient-to-br from-brand-bg to-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+      </div>
+    );
+  }
+
   if (slides.length === 0) {
     return null;
   }
 
   const currentSlide = slides[current];
+  const slideLink = currentSlide.category_slug
+    ? `/category/${currentSlide.category_slug}`
+    : "/";
 
   return (
     <div
@@ -73,11 +114,11 @@ export default function HeroCarousel({
           transition={{ duration: 0.7 }}
           className="absolute inset-0"
         >
-          <Link href={currentSlide.link || "#"} className="relative w-full h-full block group">
+          <Link href={slideLink} className="relative w-full h-full block group">
             {/* Image */}
             <Image
-              src={currentSlide.image}
-              alt={currentSlide.alt}
+              src={currentSlide.image_url}
+              alt={currentSlide.title}
               fill
               priority={current === 0}
               quality={90}
@@ -88,30 +129,26 @@ export default function HeroCarousel({
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
             {/* Text overlay */}
-            {(currentSlide.title || currentSlide.subtitle) && (
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="absolute bottom-0 left-0 right-0 p-6 md:p-12 lg:p-16 text-white"
-              >
-                {currentSlide.title && (
-                  <h1 className="font-display text-3xl md:text-5xl lg:text-6xl mb-3 md:mb-4 drop-shadow-lg">
-                    {currentSlide.title}
-                  </h1>
-                )}
-                {currentSlide.subtitle && (
-                  <p className="font-body text-base md:text-lg lg:text-xl mb-4 md:mb-6 max-w-2xl drop-shadow-lg">
-                    {currentSlide.subtitle}
-                  </p>
-                )}
-                {currentSlide.cta && (
-                  <button className="px-6 md:px-8 py-2 md:py-3 bg-brand-primary text-white font-semibold rounded-full hover:bg-brand-accent transition-all hover:scale-105 text-sm md:text-base">
-                    {currentSlide.cta}
-                  </button>
-                )}
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="absolute bottom-0 left-0 right-0 p-6 md:p-12 lg:p-16 text-white"
+            >
+              <h1 className="font-display text-3xl md:text-5xl lg:text-6xl mb-3 md:mb-4 drop-shadow-lg">
+                {currentSlide.title}
+              </h1>
+              {currentSlide.subtitle && (
+                <p className="font-body text-base md:text-lg lg:text-xl mb-4 md:mb-6 max-w-2xl drop-shadow-lg">
+                  {currentSlide.subtitle}
+                </p>
+              )}
+              {currentSlide.button_text && (
+                <button className="px-6 md:px-8 py-2 md:py-3 bg-brand-primary text-white font-semibold rounded-full hover:bg-brand-accent transition-all hover:scale-105 text-sm md:text-base">
+                  {currentSlide.button_text}
+                </button>
+              )}
+            </motion.div>
           </Link>
         </motion.div>
       </AnimatePresence>

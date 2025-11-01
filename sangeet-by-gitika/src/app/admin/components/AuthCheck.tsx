@@ -93,6 +93,12 @@ export default function AuthCheck({ children }: Props) {
                 Categories
               </a>
               <a
+                href="/admin/hero-slides"
+                className="px-3 py-1 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+              >
+                Hero Slides
+              </a>
+              <a
                 href="/admin/analytics"
                 className="px-3 py-1 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
               >
