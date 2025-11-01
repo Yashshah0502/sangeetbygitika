@@ -10,6 +10,8 @@ export default function ProductForm() {
     price: "",
     description: "",
     category: "",
+    special_price: "",
+    special_price_message: "",
   });
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -19,14 +21,31 @@ export default function ProductForm() {
     setLoading(true);
 
     try {
+      const basePrice = Number(form.price);
+      const specialPrice = form.special_price ? Number(form.special_price) : undefined;
+
+      if (!Number.isFinite(basePrice) || basePrice <= 0) {
+        throw new Error("Please enter a valid price.");
+      }
+
+      if (specialPrice != null && (!Number.isFinite(specialPrice) || specialPrice <= 0)) {
+        throw new Error("Please enter a valid special price or leave it blank.");
+      }
+
+      if (specialPrice != null && specialPrice >= basePrice) {
+        throw new Error("Special price must be lower than the regular price.");
+      }
+
       const productData = {
         name: form.name,
-        price: Number(form.price),
+        price: basePrice,
         description: form.description,
         category: form.category,
         image_url: imageUrls[0], // First image for backwards compatibility
         image_urls: imageUrls, // All images as array
         is_available: true,
+        special_price: specialPrice,
+        special_price_message: form.special_price_message?.trim() || null,
       };
 
       const response = await fetch("/api/admin/products", {
@@ -44,7 +63,7 @@ export default function ProductForm() {
       }
 
       toast.success("Product added successfully!");
-      setForm({ name: "", price: "", description: "", category: "" });
+      setForm({ name: "", price: "", description: "", category: "", special_price: "", special_price_message: "" });
       setImageUrls([]);
 
       // Reload the page to show the new product
@@ -74,6 +93,21 @@ export default function ProductForm() {
         value={form.price}
         onChange={(e) => setForm({ ...form, price: e.target.value })}
         required
+      />
+      <input
+        type="number"
+        placeholder="Special Price (₹) — optional"
+        className="border p-2 rounded"
+        value={form.special_price}
+        onChange={(e) => setForm({ ...form, special_price: e.target.value })}
+        min="0"
+      />
+      <input
+        type="text"
+        placeholder="Special Price Note (e.g., Limited time only)"
+        className="border p-2 rounded"
+        value={form.special_price_message}
+        onChange={(e) => setForm({ ...form, special_price_message: e.target.value })}
       />
       <textarea
         placeholder="Description"

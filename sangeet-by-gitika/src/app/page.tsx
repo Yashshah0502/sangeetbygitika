@@ -18,6 +18,8 @@ type Product = {
   id: string;
   name: string;
   price: number | null;
+  special_price?: number | null;
+  special_price_message?: string | null;
   image_url: string;
   image_urls?: string[];
   category: string;
@@ -61,7 +63,7 @@ export default function Home() {
       // Fetch products
       const { data: productsData } = await supabase
         .from("products")
-        .select("id,name,price,image_url,image_urls,category,created_at,stock_quantity")
+        .select("id,name,price,special_price,special_price_message,image_url,image_urls,category,created_at,stock_quantity")
         .eq("is_available", true);
 
       // Fetch categories
@@ -95,11 +97,14 @@ export default function Home() {
       );
     }
 
+    const getEffectivePrice = (product: Product) =>
+      product.special_price ?? product.price ?? 0;
+
     // Sort
     if (sortBy === "Price (Low → High)") {
-      result.sort((a, b) => (a.price || 0) - (b.price || 0));
+      result.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
     } else if (sortBy === "Price (High → Low)") {
-      result.sort((a, b) => (b.price || 0) - (a.price || 0));
+      result.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
     } else {
       result.sort((a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -129,12 +134,18 @@ export default function Home() {
 
   const handleAddToCart = (e: React.MouseEvent, p: Product) => {
     e.preventDefault();
-    if (p.price) {
+    const unitPrice = p.special_price ?? p.price;
+    if (unitPrice) {
       addToCart({
         id: p.id,
         name: p.name,
-        price: p.price,
+        price: unitPrice,
         image_url: p.image_url,
+        original_price:
+          p.special_price != null && p.price != null && p.special_price < p.price
+            ? p.price
+            : undefined,
+        special_price_message: p.special_price_message,
       });
     }
   };
@@ -142,12 +153,16 @@ export default function Home() {
   const handleWishlistToggle = (e: React.MouseEvent, p: Product) => {
     e.preventDefault();
     e.stopPropagation();
-    if (p.price) {
+    const unitPrice = p.special_price ?? p.price;
+    if (unitPrice) {
       addToWishlist({
         id: p.id,
         name: p.name,
-        price: p.price,
+        price: p.price ?? unitPrice,
+        special_price: p.special_price,
+        special_price_message: p.special_price_message,
         image_url: p.image_url,
+        stock_quantity: p.stock_quantity,
       });
     }
   };

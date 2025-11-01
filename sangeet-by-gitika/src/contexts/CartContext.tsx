@@ -8,6 +8,8 @@ type CartItem = {
   price: number;
   image_url: string;
   quantity: number;
+  original_price?: number;
+  special_price_message?: string | null;
 };
 
 type CartContextType = {
@@ -56,9 +58,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCartItems((prev) => {
       const existingItem = prev.find((i) => i.id === item.id);
       if (existingItem) {
-        // Increment quantity if already exists
+        // Update pricing details and increment quantity if already exists
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id
+            ? {
+                ...i,
+                price: item.price,
+                original_price: item.original_price,
+                special_price_message: item.special_price_message,
+                quantity: i.quantity + 1,
+              }
+            : i
         );
       }
       return [...prev, { ...item, quantity: 1 }];

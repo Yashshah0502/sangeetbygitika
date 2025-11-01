@@ -8,6 +8,8 @@ type Product = {
   id: string;
   name: string;
   price: number;
+  special_price?: number | null;
+  special_price_message?: string | null;
   image_url: string;
   image_urls?: string[];
   description?: string;
@@ -19,14 +21,20 @@ export default function ProductDetail({ product }: { product: Product }) {
   const { addToCart, cartItems } = useCart();
 
   const isInCart = cartItems.find((item) => item.id === product.id);
+  const effectivePrice =
+    product.special_price != null ? product.special_price : product.price;
+  const showSpecialPrice =
+    product.special_price != null && product.special_price < product.price;
 
   const handleAddToCart = () => {
-    if (product.price) {
+    if (effectivePrice) {
       addToCart({
         id: product.id,
         name: product.name,
-        price: product.price,
+        price: effectivePrice,
         image_url: product.image_url,
+        original_price: showSpecialPrice ? product.price : undefined,
+        special_price_message: product.special_price_message,
       });
     }
   };
@@ -37,14 +45,18 @@ export default function ProductDetail({ product }: { product: Product }) {
     : [product.image_url];
 
   const isSoldOut = product.stock_quantity === 0;
+  const priceSnippet = showSpecialPrice
+    ? `(Special price ₹${product.special_price}, original ₹${product.price})`
+    : `(₹${product.price})`;
+
   const whatsappMessage = isSoldOut
-    ? `Hi! I'm interested in ${product.name} (₹${product.price}). When will it be back in stock?`
-    : `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
+    ? `Hi! I'm interested in ${product.name} ${priceSnippet}. When will it be back in stock?`
+    : `Hi! I'm interested in ${product.name} ${priceSnippet}. Is it available?`;
   const whatsappLink = `https://wa.me/918440866772?text=${encodeURIComponent(whatsappMessage)}`;
 
   const instagramMessage = isSoldOut
-    ? `Hi! I'm interested in ${product.name} (₹${product.price}). When will it be back in stock?`
-    : `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
+    ? `Hi! I'm interested in ${product.name} ${priceSnippet}. When will it be back in stock?`
+    : `Hi! I'm interested in ${product.name} ${priceSnippet}. Is it available?`;
 
   const handleInstagramMessage = async () => {
     try {
@@ -75,9 +87,21 @@ export default function ProductDetail({ product }: { product: Product }) {
             <h1 className="font-display text-3xl md:text-4xl text-brand-text">
               {product.name}
             </h1>
-            <p className="text-2xl md:text-3xl text-brand-accent font-medium mt-3">
-              ₹{product.price}
-            </p>
+            <div className="mt-3 space-y-2">
+              <p className="text-2xl md:text-3xl text-brand-accent font-semibold">
+                ₹{effectivePrice}
+              </p>
+              {showSpecialPrice && (
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-lg text-brand-text/50 line-through">
+                    ₹{product.price}
+                  </span>
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-medium uppercase tracking-wide">
+                    ✨ {product.special_price_message?.trim() || "Limited time only"}
+                  </span>
+                </div>
+              )}
+            </div>
 
             {/* Stock Status */}
             {isSoldOut && (

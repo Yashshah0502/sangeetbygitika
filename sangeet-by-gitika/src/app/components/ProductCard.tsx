@@ -10,6 +10,8 @@ type Product = {
   id: string;
   name: string;
   price: number | null;
+  special_price?: number | null;
+  special_price_message?: string | null;
   image_url: string;
   image_urls?: string[];
   category: string;
@@ -44,10 +46,22 @@ export default function ProductCard({
     ? product.image_urls
     : [product.image_url];
 
+  const effectivePrice =
+    product.special_price != null ? product.special_price : product.price;
+  const showSpecialPrice =
+    product.special_price != null &&
+    product.price != null &&
+    product.special_price < product.price;
+
   // WhatsApp inquiry for sold out items
   const handleInquiry = (e: React.MouseEvent) => {
     e.preventDefault();
-    const message = `Hi! I'm interested in ${product.name}${product.price ? ` (₹${product.price})` : ''}. When will it be back in stock?`;
+    const priceInfo = showSpecialPrice
+      ? ` (Special price ₹${product.special_price}, original ₹${product.price})`
+      : product.price
+        ? ` (₹${product.price})`
+        : "";
+    const message = `Hi! I'm interested in ${product.name}${priceInfo}. When will it be back in stock?`;
     const whatsappLink = `https://wa.me/918440866772?text=${encodeURIComponent(message)}`;
     window.open(whatsappLink, '_blank');
   };
@@ -127,10 +141,22 @@ export default function ProductCard({
           <h3 className="font-display text-xs sm:text-sm md:text-base lg:text-lg text-brand-text group-hover:text-brand-primary transition-colors line-clamp-2">
             {product.name}
           </h3>
-          {product.price != null && (
-            <p className="text-brand-accent font-medium text-xs sm:text-sm md:text-base mt-0.5 md:mt-1">
-              ₹{product.price}
-            </p>
+          {effectivePrice != null && (
+            <div className="mt-0.5 md:mt-1 flex flex-col items-center gap-0.5">
+              <p className="text-brand-accent font-semibold text-xs sm:text-sm md:text-base">
+                ₹{effectivePrice}
+              </p>
+              {showSpecialPrice && (
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="text-[10px] sm:text-xs text-gray-500 line-through">
+                    ₹{product.price}
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-primary/10 text-[10px] sm:text-xs text-brand-primary font-medium uppercase tracking-wide">
+                    ✨ {product.special_price_message?.trim() || "Limited time only"}
+                  </span>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </Link>
@@ -139,12 +165,18 @@ export default function ProductCard({
       {product.stock_quantity === 0 ? (
         <button
           onClick={handleInquiry}
-          className="mt-2 md:mt-3 w-full py-1.5 md:py-2 px-2 md:px-4 rounded-full text-xs md:text-sm font-medium bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-500 text-gray-800 hover:from-red-100 hover:to-red-200 hover:scale-105 transition-all shadow-md hover:shadow-lg cursor-pointer"
+          className="mt-2 md:mt-3 w-full py-2 px-3 md:px-4 rounded-2xl transition-all bg-white/90 border border-red-200 hover:border-red-300 hover:bg-white shadow-sm hover:shadow-md"
         >
-          <div className="flex items-center justify-center gap-1 md:gap-2 flex-wrap">
-            <span className="text-red-600 font-bold text-[10px] sm:text-xs">OUT OF STOCK</span>
-            <span className="text-red-400 hidden sm:inline">•</span>
-            <span className="text-gray-700 text-[10px] sm:text-xs">Ask About Product 💬</span>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-base md:text-lg leading-none text-red-500"></span>
+            <div className="flex flex-col items-start leading-tight">
+              <span className="text-xs md:text-sm font-semibold uppercase tracking-wide text-red-500">
+                SOLD OUT
+              </span>
+              <span className="text-[10px] md:text-xs text-gray-600 font-normal">
+                Tap to ask about restock 💬
+              </span>
+            </div>
           </div>
         </button>
       ) : cartQuantity === 0 ? (

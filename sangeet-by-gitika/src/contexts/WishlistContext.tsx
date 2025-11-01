@@ -2,11 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-type WishlistItem = {
+export type WishlistItem = {
   id: string;
   name: string;
   price: number;
   image_url: string;
+  stock_quantity?: number;
+  special_price?: number | null;
+  special_price_message?: string | null;
 };
 
 type WishlistContextType = {
@@ -46,8 +49,10 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const addToWishlist = (item: WishlistItem) => {
     setWishlistItems((prev) => {
-      if (prev.find((i) => i.id === item.id)) {
-        return prev; // Don't add duplicates
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        // Update stored details (price, stock, etc.)
+        return prev.map((i) => (i.id === item.id ? { ...i, ...item } : i));
       }
       return [...prev, item];
     });

@@ -101,9 +101,21 @@ export default function CartPage() {
                     {item.name}
                   </h3>
                 </Link>
-                <p className="text-brand-accent font-medium text-xl mt-2">
-                  ₹{item.price} each
-                </p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-brand-accent font-semibold text-xl">
+                    ₹{item.price} each
+                  </p>
+                  {item.original_price && item.original_price > item.price && (
+                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                      <span className="text-brand-text/50 line-through">
+                        ₹{item.original_price}
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-medium uppercase tracking-wide">
+                        ✨ {item.special_price_message?.trim() || "Limited time only"}
+                      </span>
+                    </div>
+                  )}
+                </div>
 
                 {/* Quantity Controls */}
                 <div className="flex items-center gap-3 mt-3">

@@ -9,6 +9,8 @@ type Product = {
   name: string;
   price: number;
   image_url: string;
+  special_price?: number | null;
+  special_price_message?: string | null;
 };
 
 export default function AdminPage() {
@@ -21,7 +23,7 @@ export default function AdminPage() {
   async function fetchProducts() {
     const { data } = await supabase
       .from("products")
-      .select("id,name,price,image_url")
+      .select("id,name,price,special_price,special_price_message,image_url")
       .order("created_at", { ascending: false });
     setProducts(data || []);
   }
@@ -38,7 +40,19 @@ export default function AdminPage() {
             <div key={p.id} className="bg-white rounded-2xl shadow-luxury p-4 md:p-6 text-center">
               <img src={p.image_url} alt={p.name} className="rounded-xl w-full h-48 sm:h-56 md:h-64 object-cover" />
               <h3 className="mt-3 md:mt-4 font-display text-base md:text-lg">{p.name}</h3>
-              <p className="text-sangeet-gold font-medium text-sm md:text-base mt-2">₹{p.price}</p>
+              <div className="mt-2 space-y-1">
+                <p className="text-sangeet-gold font-semibold text-sm md:text-base">
+                  ₹{p.special_price != null && p.special_price < p.price ? p.special_price : p.price}
+                </p>
+                {p.special_price != null && p.special_price < p.price && (
+                  <>
+                    <p className="text-xs text-gray-500 line-through">₹{p.price}</p>
+                    <p className="text-[10px] uppercase tracking-wide text-brand-primary">
+                      {p.special_price_message?.trim() || "Limited time only"}
+                    </p>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </section>

@@ -12,6 +12,8 @@ type Product = {
   name: string;
   category: string;
   price: number;
+  special_price?: number | null;
+  special_price_message?: string | null;
   stock_quantity: number;
   description: string;
   image_url: string;
@@ -30,6 +32,8 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
   const [form, setForm] = useState({
     name: product.name,
     price: product.price.toString(),
+    special_price: product.special_price?.toString() || "",
+    special_price_message: product.special_price_message || "",
     description: product.description || "",
     category: product.category,
     stock: (product.stock_quantity || 0).toString(),
@@ -113,17 +117,34 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
     setSaving(true);
 
     try {
+      const basePrice = Number(form.price);
+      const specialPrice = form.special_price ? Number(form.special_price) : undefined;
+
+      if (!Number.isFinite(basePrice) || basePrice <= 0) {
+        throw new Error("Please enter a valid price.");
+      }
+
+      if (specialPrice != null && (!Number.isFinite(specialPrice) || specialPrice <= 0)) {
+        throw new Error("Please enter a valid special price or leave it blank.");
+      }
+
+      if (specialPrice != null && specialPrice >= basePrice) {
+        throw new Error("Special price must be lower than the regular price.");
+      }
+
       // Build update data with all fields
       const updateData = {
         id: product.id,
         name: form.name,
-        price: Number(form.price),
+        price: basePrice,
         image_url: imageUrls[0],
         category: form.category,
         description: form.description,
         stock_quantity: Number(form.stock),
         is_available: form.is_available,
         image_urls: imageUrls,
+        special_price: specialPrice ?? null,
+        special_price_message: form.special_price_message?.trim() || null,
       };
 
       // Update the product via API route
@@ -205,8 +226,8 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
             </select>
           </div>
 
-          {/* Price & Stock */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Pricing & Stock */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Price (₹)
@@ -229,6 +250,34 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
                 onChange={(e) => setForm({ ...form, stock: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Special Price (₹)
+                <span className="text-gray-400 text-xs ml-1">Optional</span>
+              </label>
+              <input
+                type="number"
+                value={form.special_price}
+                onChange={(e) => setForm({ ...form, special_price: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Special Price Note
+                <span className="text-gray-400 text-xs ml-1">Optional</span>
+              </label>
+              <input
+                type="text"
+                value={form.special_price_message}
+                onChange={(e) =>
+                  setForm({ ...form, special_price_message: e.target.value })
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                placeholder="Limited time only"
               />
             </div>
           </div>

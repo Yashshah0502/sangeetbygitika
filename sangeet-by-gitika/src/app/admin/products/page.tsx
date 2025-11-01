@@ -22,6 +22,8 @@ type Product = {
   name: string;
   category: string;
   price: number;
+  special_price?: number | null;
+  special_price_message?: string | null;
   stock_quantity: number;
   image_url: string;
   image_urls?: string[];
@@ -126,6 +128,12 @@ export default function ProductsManagement() {
       };
 
       // Include optional fields if they exist
+      if (product.special_price != null) {
+        insertData.special_price = product.special_price;
+      }
+      if (product.special_price_message) {
+        insertData.special_price_message = product.special_price_message;
+      }
       if (product.image_urls) {
         insertData.image_urls = product.image_urls;
       }
@@ -304,8 +312,28 @@ export default function ProductsManagement() {
                         {product.category}
                       </span>
                     </td>
-                    <td className="py-3 md:py-4 px-4 md:px-6 font-semibold text-brand-accent text-sm">
-                      ₹{product.price}
+                    <td className="py-3 md:py-4 px-4 md:px-6">
+                      <div className="flex flex-col gap-1 text-sm">
+                        <span className="font-semibold text-brand-accent">
+                          ₹
+                          {product.special_price != null &&
+                          product.special_price < product.price
+                            ? product.special_price
+                            : product.price}
+                        </span>
+                        {product.special_price != null &&
+                          product.special_price < product.price && (
+                            <>
+                              <span className="text-xs text-gray-500 line-through">
+                                ₹{product.price}
+                              </span>
+                              <span className="text-[10px] uppercase tracking-wide text-brand-primary">
+                                {product.special_price_message?.trim() ||
+                                  "Limited time only"}
+                              </span>
+                            </>
+                          )}
+                      </div>
                     </td>
                     <td className="py-3 md:py-4 px-4 md:px-6">
                       <span
@@ -389,7 +417,27 @@ export default function ProductsManagement() {
                 </div>
 
                 <div className="flex items-center justify-between mb-3">
-                  <p className="font-bold text-brand-accent text-lg">₹{product.price}</p>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-brand-accent text-lg">
+                      ₹
+                      {product.special_price != null &&
+                      product.special_price < product.price
+                        ? product.special_price
+                        : product.price}
+                    </span>
+                    {product.special_price != null &&
+                      product.special_price < product.price && (
+                        <>
+                          <span className="text-sm text-gray-500 line-through">
+                            ₹{product.price}
+                          </span>
+                          <span className="text-[10px] uppercase tracking-wide text-brand-primary mt-1">
+                            {product.special_price_message?.trim() ||
+                              "Limited time only"}
+                          </span>
+                        </>
+                      )}
+                  </div>
                   <p className="text-xs text-gray-500">
                     {new Date(product.created_at).toLocaleDateString()}
                   </p>
