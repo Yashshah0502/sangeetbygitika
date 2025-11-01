@@ -12,13 +12,31 @@ export default function AuthCheck({ children }: Props) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
   const [adminName, setAdminName] = useState<string>("");
+  const [isSuperadmin, setIsSuperadmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    // Check admin role from cookie
+    async function checkRole() {
+      try {
+        // The middleware already verifies the token
+        // We just need to check the role for UI purposes
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          setIsSuperadmin(data.role === 'superadmin');
+          setAdminName(data.name || data.email);
+        }
+      } catch (error) {
+        console.error('Error checking role:', error);
+      }
+    }
+
     // The middleware already handles authentication
     // If we're here, we're authenticated
     setIsAuthenticated(true);
     setIsChecking(false);
+    checkRole();
   }, []);
 
   async function handleLogout() {
@@ -97,6 +115,14 @@ export default function AuthCheck({ children }: Props) {
               >
                 Add Product
               </a>
+              {isSuperadmin && (
+                <a
+                  href="/admin/manage-admins"
+                  className="px-3 py-1 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors border-l-2 border-brand-primary"
+                >
+                  Manage Admins
+                </a>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-4">

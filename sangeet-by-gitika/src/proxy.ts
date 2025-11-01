@@ -25,6 +25,14 @@ export function proxy(request: NextRequest) {
       return response;
     }
 
+    // Superadmin-only routes
+    const superadminRoutes = ['/admin/manage-admins'];
+    if (superadminRoutes.some(route => pathname.startsWith(route))) {
+      if (payload.role !== 'superadmin') {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+      }
+    }
+
     // Add user info to headers for use in pages
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-admin-id', payload.id);
