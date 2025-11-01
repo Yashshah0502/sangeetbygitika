@@ -581,11 +581,11 @@ export default function HeroSlidesManagement() {
                   </div>
                 ) : (
                   // View Mode
-                  <div className="flex items-start gap-4">
-                    <div className="flex items-center text-gray-400">
+                  <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                    <div className="hidden sm:flex items-center text-gray-400">
                       <GripVertical className="w-5 h-5" />
                     </div>
-                    <div className="relative w-32 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="relative w-full sm:w-32 h-32 sm:h-20 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
                         src={slide.image_url}
                         alt={slide.title}
@@ -593,8 +593,8 @@ export default function HeroSlidesManagement() {
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-lg">{slide.title}</h3>
+                    <div className="flex-1 min-w-0 w-full">
+                      <h3 className="font-semibold text-base sm:text-lg">{slide.title}</h3>
                       {slide.subtitle && (
                         <p className="text-gray-600 text-sm">{slide.subtitle}</p>
                       )}
@@ -614,10 +614,10 @@ export default function HeroSlidesManagement() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex sm:flex-col items-center gap-2 w-full sm:w-auto">
                       <button
                         onClick={() => toggleActive(slide.id, slide.is_active)}
-                        className={`p-2 rounded hover:bg-gray-200 ${
+                        className={`flex-1 sm:flex-none p-2 rounded hover:bg-gray-200 ${
                           slide.is_active ? "text-green-600" : "text-gray-400"
                         }`}
                         title={slide.is_active ? "Deactivate" : "Activate"}
@@ -630,13 +630,13 @@ export default function HeroSlidesManagement() {
                       </button>
                       <button
                         onClick={() => startEdit(slide)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                        className="flex-1 sm:flex-none p-2 text-blue-600 hover:bg-blue-50 rounded"
                       >
                         <Pencil className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleDeleteSlide(slide.id, slide.image_url)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded"
+                        className="flex-1 sm:flex-none p-2 text-red-600 hover:bg-red-50 rounded"
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>

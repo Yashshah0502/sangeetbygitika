@@ -85,15 +85,15 @@ export default function AdminDashboard() {
   }) => {
     const content = (
       <div
-        className={`bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-all cursor-pointer border-l-4 ${color}`}
+        className={`bg-white rounded-2xl shadow-md p-4 md:p-6 hover:shadow-lg transition-all cursor-pointer border-l-4 ${color}`}
       >
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600 mb-1">{title}</p>
-            <h3 className="text-3xl font-bold text-gray-800">{value}</h3>
+            <p className="text-xs md:text-sm text-gray-600 mb-1">{title}</p>
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-800">{value}</h3>
           </div>
-          <div className={`p-3 rounded-full bg-linear-to-br ${color.replace("border", "from")}-100 to-brand-hover-to`}>
-            <Icon className="w-6 h-6 text-brand-primary" />
+          <div className={`p-2 md:p-3 rounded-full bg-linear-to-br ${color.replace("border", "from")}-100 to-brand-hover-to`}>
+            <Icon className="w-5 h-5 md:w-6 md:h-6 text-brand-primary" />
           </div>
         </div>
       </div>
@@ -105,9 +105,9 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <AuthCheck>
-        <div className="min-h-screen bg-linear-to-br from-brand-bg to-white p-8">
+        <div className="min-h-screen bg-linear-to-br from-brand-bg to-white p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-display text-brand-primary mb-8">
+            <h1 className="text-2xl md:text-3xl font-display text-brand-primary mb-8">
               Loading Dashboard...
             </h1>
           </div>
@@ -118,30 +118,30 @@ export default function AdminDashboard() {
 
   return (
     <AuthCheck>
-      <div className="min-h-screen bg-linear-to-br from-brand-bg to-white p-8">
+      <div className="min-h-screen bg-linear-to-br from-brand-bg to-white p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 md:mb-8">
           <div>
-            <h1 className="text-3xl font-display text-brand-primary mb-2">
+            <h1 className="text-2xl md:text-3xl font-display text-brand-primary mb-2">
               Admin Dashboard
             </h1>
-            <p className="text-gray-600">
+            <p className="text-sm md:text-base text-gray-600">
               Welcome back! Here's your store overview
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button
               onClick={() => fetchDashboardData(true)}
               disabled={refreshing}
-              className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-brand-primary text-brand-primary rounded-full hover:bg-brand-primary hover:text-white transition-all font-medium disabled:opacity-50"
+              className="flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-white border-2 border-brand-primary text-brand-primary rounded-full hover:bg-brand-primary hover:text-white transition-all font-medium disabled:opacity-50 text-sm md:text-base"
             >
               <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
+              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
             </button>
             <Link
               href="/admin"
-              className="px-6 py-3 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 transition-all font-medium"
+              className="flex items-center justify-center px-4 md:px-6 py-2.5 md:py-3 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 transition-all font-medium text-sm md:text-base whitespace-nowrap"
             >
               + Add New Product
             </Link>
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
           <StatCard
             title="Total Products"
             value={stats.totalProducts}
@@ -179,38 +179,38 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Products */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-display text-gray-800">
+        <div className="bg-white rounded-2xl shadow-md p-4 md:p-6">
+          <div className="flex justify-between items-center mb-4 md:mb-6">
+            <h2 className="text-lg md:text-xl font-display text-gray-800">
               Recent Products
             </h2>
             <Link
               href="/admin/products"
-              className="text-brand-primary hover:text-brand-accent text-sm font-medium"
+              className="text-brand-primary hover:text-brand-accent text-xs md:text-sm font-medium whitespace-nowrap"
             >
               View All →
             </Link>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {recentProducts.map((product) => (
               <div
                 key={product.id}
-                className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <img
                   src={product.image_url}
                   alt={product.name}
-                  className="w-16 h-16 rounded-lg object-cover"
+                  className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover flex-shrink-0"
                 />
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-800">{product.name}</h3>
-                  <p className="text-sm text-gray-500">{product.category}</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-gray-800 text-sm md:text-base truncate">{product.name}</h3>
+                  <p className="text-xs md:text-sm text-gray-500 truncate">{product.category}</p>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-brand-accent">₹{product.price}</p>
-                  <div className="flex items-center gap-2 justify-end mt-1">
+                <div className="text-right flex-shrink-0">
+                  <p className="font-bold text-brand-accent text-sm md:text-base">₹{product.price}</p>
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-2 justify-end mt-1">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      className={`px-2 py-0.5 md:py-1 rounded-full text-xs font-medium ${
                         (product.stock_quantity || 0) < 5
                           ? "bg-red-100 text-red-600"
                           : "bg-green-100 text-green-600"
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                     >
                       Stock: {product.stock_quantity || 0}
                     </span>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs text-gray-500 hidden sm:block">
                       {new Date(product.created_at).toLocaleDateString()}
                     </p>
                   </div>

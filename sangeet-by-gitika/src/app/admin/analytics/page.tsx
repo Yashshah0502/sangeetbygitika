@@ -154,9 +154,9 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <AuthCheck>
-        <div className="min-h-screen bg-linear-to-br from-brand-bg to-white p-8">
+        <div className="min-h-screen bg-linear-to-br from-brand-bg to-white p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-display text-brand-primary mb-8">
+            <h1 className="text-2xl md:text-3xl font-display text-brand-primary mb-6 md:mb-8">
               Loading Analytics...
             </h1>
           </div>
@@ -167,29 +167,29 @@ export default function AnalyticsPage() {
 
   return (
     <AuthCheck>
-      <div className="min-h-screen bg-linear-to-br from-brand-bg to-white p-8">
+      <div className="min-h-screen bg-linear-to-br from-brand-bg to-white p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 md:mb-8">
           <div>
-            <h1 className="text-3xl font-display text-brand-primary mb-2">
+            <h1 className="text-2xl md:text-3xl font-display text-brand-primary mb-2">
               Analytics Dashboard
             </h1>
-            <p className="text-gray-600">
+            <p className="text-sm md:text-base text-gray-600">
               Insights into your store performance
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-brand-primary text-brand-primary rounded-full hover:bg-brand-primary hover:text-white transition-all font-medium"
+              className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-white border-2 border-brand-primary text-brand-primary rounded-full hover:bg-brand-primary hover:text-white transition-all font-medium text-sm md:text-base"
             >
               <Download className="w-4 h-4" />
               Export CSV
             </button>
             <Link
               href="/admin/dashboard"
-              className="px-6 py-3 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 transition-all font-medium"
+              className="flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 transition-all font-medium text-sm md:text-base"
             >
               Back to Dashboard
             </Link>
@@ -197,58 +197,58 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Stats Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-md p-6 border-l-4 border-blue-500">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+          <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 border-l-4 border-blue-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total Views</p>
-                <h3 className="text-3xl font-bold text-gray-800">
+                <p className="text-xs md:text-sm text-gray-600 mb-1">Total Views</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">
                   {analytics.totalViews}
                 </h3>
               </div>
-              <div className="p-3 rounded-full bg-blue-100">
-                <Eye className="w-6 h-6 text-brand-primary" />
+              <div className="p-2 md:p-3 rounded-full bg-blue-100">
+                <Eye className="w-5 h-5 md:w-6 md:h-6 text-brand-primary" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-md p-6 border-l-4 border-green-500">
+          <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 border-l-4 border-green-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Avg Views/Product</p>
-                <h3 className="text-3xl font-bold text-gray-800">
+                <p className="text-xs md:text-sm text-gray-600 mb-1">Avg Views/Product</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">
                   {analytics.avgViewsPerProduct}
                 </h3>
               </div>
-              <div className="p-3 rounded-full bg-green-100">
-                <TrendingUp className="w-6 h-6 text-brand-primary" />
+              <div className="p-2 md:p-3 rounded-full bg-green-100">
+                <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-brand-primary" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-md p-6 border-l-4 border-purple-500">
+          <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 border-l-4 border-purple-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total Products</p>
-                <h3 className="text-3xl font-bold text-gray-800">
+                <p className="text-xs md:text-sm text-gray-600 mb-1">Total Products</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">
                   {analytics.categoryStats.reduce((sum, cat) => sum + cat.count, 0)}
                 </h3>
               </div>
-              <div className="p-3 rounded-full bg-purple-100">
-                <Package className="w-6 h-6 text-brand-primary" />
+              <div className="p-2 md:p-3 rounded-full bg-purple-100">
+                <Package className="w-5 h-5 md:w-6 md:h-6 text-brand-primary" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
           {/* Daily Views Line Chart */}
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-xl font-display text-gray-800 mb-6">
+          <div className="bg-white rounded-2xl shadow-md p-4 md:p-6">
+            <h2 className="text-lg md:text-xl font-display text-gray-800 mb-4 md:mb-6">
               Daily Views (Last 7 Days)
             </h2>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250} minWidth="100%">
               <LineChart data={analytics.dailyViews}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis

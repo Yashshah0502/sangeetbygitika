@@ -176,39 +176,40 @@ export default function ManageAdmins() {
 
   return (
     <AuthCheck>
-      <div className="p-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/admin/dashboard"
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-brand-primary hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Dashboard</span>
-            </Link>
+      <div className="p-4 md:p-6 lg:p-8">
+        {/* Header - Responsive */}
+        <div className="mb-6 md:mb-8">
+          <Link
+            href="/admin/dashboard"
+            className="inline-flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-brand-primary hover:bg-gray-100 rounded-lg transition-colors mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm">Back</span>
+          </Link>
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Manage Admins</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Manage Admins</h1>
+              <p className="text-sm md:text-base text-gray-600 mt-1">
                 Add, remove, and manage admin users
               </p>
             </div>
-          </div>
 
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-accent text-white rounded-lg hover:opacity-90 transition-all font-medium"
-          >
-            <UserPlus className="w-5 h-5" />
-            Add New Admin
-          </button>
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-accent text-white rounded-lg hover:opacity-90 transition-all font-medium whitespace-nowrap"
+            >
+              <UserPlus className="w-5 h-5" />
+              <span className="text-sm md:text-base">Add New Admin</span>
+            </button>
+          </div>
         </div>
 
         {/* Add Admin Form */}
         {showAddForm && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border-2 border-brand-primary">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <UserPlus className="w-6 h-6 text-brand-primary" />
+          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 mb-6 md:mb-8 border-2 border-brand-primary">
+            <h2 className="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2">
+              <UserPlus className="w-5 h-5 md:w-6 md:h-6 text-brand-primary" />
               Add New Admin
             </h2>
             <form onSubmit={handleAddAdmin} className="space-y-4">
@@ -270,11 +271,11 @@ export default function ManageAdmins() {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm md:text-base"
                 >
                   {submitting ? "Adding..." : "Add Admin"}
                 </button>
@@ -284,7 +285,7 @@ export default function ManageAdmins() {
                     setShowAddForm(false);
                     setForm({ email: "", name: "", password: "", role: "admin" });
                   }}
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium text-sm md:text-base"
                 >
                   Cancel
                 </button>
@@ -295,65 +296,155 @@ export default function ManageAdmins() {
 
         {/* Admins List */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="p-6 bg-gradient-to-r from-brand-primary to-brand-accent">
-            <h2 className="text-xl font-semibold text-white">
+          <div className="p-4 md:p-6 bg-gradient-to-r from-brand-primary to-brand-accent">
+            <h2 className="text-lg md:text-xl font-semibold text-white">
               All Admins ({admins.length})
             </h2>
           </div>
 
           {admins.length === 0 ? (
-            <div className="p-12 text-center">
-              <Shield className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+            <div className="p-8 md:p-12 text-center">
+              <Shield className="w-12 h-12 md:w-16 md:h-16 mx-auto text-gray-300 mb-4" />
               <p className="text-gray-500">No admins found</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Admin
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Last Login
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {admins.map((admin) => (
-                    <tr
-                      key={admin.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {admin.name || "—"}
+            <>
+              {/* Desktop Table View - Hidden on Mobile */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Admin
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Role
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Created
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                        Last Login
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {admins.map((admin) => (
+                      <tr
+                        key={admin.id}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {admin.name || "—"}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {admin.email}
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {admin.email}
-                          </div>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <select
+                            value={admin.role}
+                            onChange={(e) =>
+                              handleChangeRole(admin.id, e.target.value)
+                            }
+                            className={`px-3 py-1 rounded-full text-xs font-medium border-2 ${
+                              admin.role === "superadmin"
+                                ? "border-purple-300 bg-purple-50 text-purple-800"
+                                : "border-blue-300 bg-blue-50 text-blue-800"
+                            }`}
+                          >
+                            <option value="admin">Admin</option>
+                            <option value="superadmin">Superadmin</option>
+                          </select>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <button
+                            onClick={() =>
+                              handleToggleStatus(admin.id, admin.is_active)
+                            }
+                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                              admin.is_active
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {admin.is_active ? (
+                              <>
+                                <CheckCircle className="w-3 h-3" />
+                                Active
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="w-3 h-3" />
+                                Inactive
+                              </>
+                            )}
+                          </button>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {new Date(admin.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                          {admin.last_login_at
+                            ? new Date(admin.last_login_at).toLocaleDateString()
+                            : "Never"}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button
+                            onClick={() => handleDeleteAdmin(admin.id, admin.email)}
+                            className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 transition-colors"
+                            title="Delete admin"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            <span className="hidden lg:inline">Delete</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View - Visible only on Mobile */}
+              <div className="md:hidden divide-y divide-gray-200">
+                {admins.map((admin) => (
+                  <div key={admin.id} className="p-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-gray-900 mb-1">
+                          {admin.name || "—"}
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-xs text-gray-500 break-all">
+                          {admin.email}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteAdmin(admin.id, admin.email)}
+                        className="ml-2 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                        title="Delete admin"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div>
+                        <label className="text-xs text-gray-500 mb-1 block">Role</label>
                         <select
                           value={admin.role}
                           onChange={(e) =>
                             handleChangeRole(admin.id, e.target.value)
                           }
-                          className={`px-3 py-1 rounded-full text-xs font-medium border-2 ${
+                          className={`w-full px-3 py-1.5 rounded-full text-xs font-medium border-2 ${
                             admin.role === "superadmin"
                               ? "border-purple-300 bg-purple-50 text-purple-800"
                               : "border-blue-300 bg-blue-50 text-blue-800"
@@ -362,13 +453,14 @@ export default function ManageAdmins() {
                           <option value="admin">Admin</option>
                           <option value="superadmin">Superadmin</option>
                         </select>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-500 mb-1 block">Status</label>
                         <button
                           onClick={() =>
                             handleToggleStatus(admin.id, admin.is_active)
                           }
-                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                          className={`w-full inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium ${
                             admin.is_active
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
@@ -386,30 +478,22 @@ export default function ManageAdmins() {
                             </>
                           )}
                         </button>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(admin.created_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>Created: {new Date(admin.created_at).toLocaleDateString()}</span>
+                      <span>
+                        Last login:{" "}
                         {admin.last_login_at
                           ? new Date(admin.last_login_at).toLocaleDateString()
                           : "Never"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => handleDeleteAdmin(admin.id, admin.email)}
-                          className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 transition-colors"
-                          title="Delete admin"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
 
