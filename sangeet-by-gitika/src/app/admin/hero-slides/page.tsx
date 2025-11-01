@@ -46,14 +46,14 @@ export default function HeroSlidesManagement() {
 
   const fetchSlides = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from("hero_slides")
-        .select("*")
-        .order("display_order", { ascending: true })
-        .order("created_at", { ascending: false });
+      const response = await fetch("/api/admin/hero-slides");
+      const result = await response.json();
 
-      if (error) throw error;
-      setSlides(data || []);
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to fetch hero slides");
+      }
+
+      setSlides(result.slides || []);
     } catch (error: any) {
       console.error("Error fetching slides:", error);
       toast.error("Failed to load hero slides");
@@ -64,13 +64,14 @@ export default function HeroSlidesManagement() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from("categories")
-        .select("*")
-        .order("name");
+      const response = await fetch("/api/admin/categories");
+      const result = await response.json();
 
-      if (error) throw error;
-      setCategories(data || []);
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to fetch categories");
+      }
+
+      setCategories(result.categories || []);
     } catch (error: any) {
       console.error("Error fetching categories:", error);
     }
@@ -147,9 +148,11 @@ export default function HeroSlidesManagement() {
         return;
       }
 
-      // Create slide record
-      const { error } = await supabase.from("hero_slides").insert([
-        {
+      // Create slide record via API
+      const response = await fetch("/api/admin/hero-slides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           title: newSlide.title,
           subtitle: newSlide.subtitle || null,
           button_text: newSlide.button_text || null,
@@ -157,10 +160,14 @@ export default function HeroSlidesManagement() {
           category_slug: newSlide.category_slug || null,
           display_order: newSlide.display_order,
           is_active: newSlide.is_active,
-        },
-      ]);
+        }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to add slide");
+      }
 
       toast.success("Hero slide added successfully!");
       setNewSlide({
@@ -189,19 +196,25 @@ export default function HeroSlidesManagement() {
     }
 
     try {
-      const { error } = await supabase
-        .from("hero_slides")
-        .update({
+      const response = await fetch("/api/admin/hero-slides", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
           title: editForm.title,
           subtitle: editForm.subtitle || null,
           button_text: editForm.button_text || null,
           category_slug: editForm.category_slug || null,
           display_order: editForm.display_order,
           is_active: editForm.is_active,
-        })
-        .eq("id", id);
+        }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to update slide");
+      }
 
       toast.success("Slide updated successfully!");
       setEditingId(null);
@@ -217,13 +230,16 @@ export default function HeroSlidesManagement() {
     if (!confirm("Are you sure you want to delete this slide?")) return;
 
     try {
-      // Delete from database
-      const { error: dbError } = await supabase
-        .from("hero_slides")
-        .delete()
-        .eq("id", id);
+      // Delete from database via API
+      const response = await fetch(`/api/admin/hero-slides?id=${id}`, {
+        method: "DELETE",
+      });
 
-      if (dbError) throw dbError;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to delete slide");
+      }
 
       // Try to delete image from storage (optional - won't fail if image doesn't exist)
       try {
@@ -245,16 +261,19 @@ export default function HeroSlidesManagement() {
 
   const toggleActive = async (id: string, currentActive: boolean) => {
     try {
-      const { data, error } = await supabase
-        .from("hero_slides")
-        .update({ is_active: !currentActive })
-        .eq("id", id)
-        .select();
+      const response = await fetch("/api/admin/hero-slides", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          is_active: !currentActive,
+        }),
+      });
 
-      if (error) {
-        console.error("Error toggling active:", error);
-        toast.error(`Failed to update slide status: ${error.message || "Unknown error"}`);
-        return;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to update slide status");
       }
 
       toast.success(`Slide ${!currentActive ? "activated" : "deactivated"}`);

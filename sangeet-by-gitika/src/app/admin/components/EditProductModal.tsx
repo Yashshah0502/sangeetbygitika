@@ -114,7 +114,8 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
 
     try {
       // Build update data with all fields
-      const updateData: any = {
+      const updateData = {
+        id: product.id,
         name: form.name,
         price: Number(form.price),
         image_url: imageUrls[0],
@@ -125,48 +126,23 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
         image_urls: imageUrls,
       };
 
-      // Update the product in Supabase
-      const { data: updateResult, error: updateError } = await supabase
-        .from("products")
-        .update(updateData)
-        .eq("id", product.id)
-        .select();
+      // Update the product via API route
+      const response = await fetch("/api/admin/products", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
 
-      if (updateError) {
-        console.error("Error updating product:", updateError);
-        toast.error(`Failed to update product: ${updateError.message}`);
-        return;
-      }
+      const result = await response.json();
 
-      // Use the updated result directly if available
-      if (updateResult && updateResult.length > 0) {
-        toast.success("Product updated successfully!");
-        onUpdate(updateResult[0]);
-        onClose();
-        return;
-      }
-
-      // Fallback: fetch the updated product if update didn't return data
-      const { data: updatedProduct, error: fetchError } = await supabase
-        .from("products")
-        .select("*")
-        .eq("id", product.id)
-        .single();
-
-      if (fetchError || !updatedProduct) {
-        // If fetch fails, use local data
-        const localUpdatedProduct = {
-          ...product,
-          ...updateData,
-        };
-        toast.success("Product updated successfully!");
-        onUpdate(localUpdatedProduct);
-        onClose();
-        return;
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to update product");
       }
 
       toast.success("Product updated successfully!");
-      onUpdate(updatedProduct);
+      onUpdate(result.product);
       onClose();
     } catch (error: any) {
       console.error("Error updating product:", error);

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
 import { Plus, Edit2, Trash2, Save, X } from "lucide-react";
 import AuthCheck from "../components/AuthCheck";
 import toast from "react-hot-toast";
@@ -22,29 +21,27 @@ export default function CategoriesPage() {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
   useEffect(() => {
     fetchCategories();
   }, []);
 
   async function fetchCategories() {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("categories")
-      .select("*")
-      .order("name");
+    try {
+      const response = await fetch("/api/admin/categories");
+      const result = await response.json();
 
-    if (error) {
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to fetch categories");
+      }
+
+      setCategories(result.categories || []);
+    } catch (error: any) {
       console.error("Error fetching categories:", error);
-      toast.error("Failed to load categories");
-    } else {
-      setCategories(data || []);
+      toast.error(error.message || "Failed to load categories");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   function generateSlug(name: string): string {
@@ -61,25 +58,27 @@ export default function CategoriesPage() {
       return;
     }
 
-    const slug = generateSlug(newCategoryName);
-    const { error } = await supabase
-      .from("categories")
-      .insert([{ name: newCategoryName.trim(), slug }]);
+    try {
+      const slug = generateSlug(newCategoryName);
+      const response = await fetch("/api/admin/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCategoryName.trim(), slug }),
+      });
 
-    if (error) {
-      console.error("Error adding category:", error);
-      if (error.code === "23505") {
-        toast.error("Category already exists");
-      } else if (error.code === "42501" || error.message?.includes("permission")) {
-        toast.error("Permission denied. Please check RLS policies or authentication.");
-      } else {
-        toast.error(`Failed to add category: ${error.message || 'Unknown error'}`);
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to add category");
       }
-    } else {
+
       toast.success("Category added successfully");
       setNewCategoryName("");
       setIsAdding(false);
       fetchCategories();
+    } catch (error: any) {
+      console.error("Error adding category:", error);
+      toast.error(error.message || "Failed to add category");
     }
   }
 
@@ -89,24 +88,27 @@ export default function CategoriesPage() {
       return;
     }
 
-    const slug = generateSlug(editName);
-    const { error } = await supabase
-      .from("categories")
-      .update({ name: editName.trim(), slug })
-      .eq("id", id);
+    try {
+      const slug = generateSlug(editName);
+      const response = await fetch("/api/admin/categories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, name: editName.trim(), slug }),
+      });
 
-    if (error) {
-      console.error("Error updating category:", error);
-      if (error.code === "23505") {
-        toast.error("Category name already exists");
-      } else {
-        toast.error("Failed to update category");
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to update category");
       }
-    } else {
+
       toast.success("Category updated successfully");
       setEditingId(null);
       setEditName("");
       fetchCategories();
+    } catch (error: any) {
+      console.error("Error updating category:", error);
+      toast.error(error.message || "Failed to update category");
     }
   }
 
@@ -115,17 +117,22 @@ export default function CategoriesPage() {
       return;
     }
 
-    const { error } = await supabase
-      .from("categories")
-      .delete()
-      .eq("id", id);
+    try {
+      const response = await fetch(`/api/admin/categories?id=${id}`, {
+        method: "DELETE",
+      });
 
-    if (error) {
-      console.error("Error deleting category:", error);
-      toast.error("Failed to delete category. It may be in use by products.");
-    } else {
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to delete category");
+      }
+
       toast.success("Category deleted successfully");
       fetchCategories();
+    } catch (error: any) {
+      console.error("Error deleting category:", error);
+      toast.error(error.message || "Failed to delete category. It may be in use by products.");
     }
   }
 

@@ -12,6 +12,7 @@ type Product = {
   image_urls?: string[];
   description?: string;
   category?: string;
+  stock_quantity?: number;
 };
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -35,10 +36,15 @@ export default function ProductDetail({ product }: { product: Product }) {
     ? product.image_urls
     : [product.image_url];
 
-  const whatsappMessage = `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
+  const isSoldOut = product.stock_quantity === 0;
+  const whatsappMessage = isSoldOut
+    ? `Hi! I'm interested in ${product.name} (₹${product.price}). When will it be back in stock?`
+    : `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
   const whatsappLink = `https://wa.me/918440866772?text=${encodeURIComponent(whatsappMessage)}`;
 
-  const instagramMessage = `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
+  const instagramMessage = isSoldOut
+    ? `Hi! I'm interested in ${product.name} (₹${product.price}). When will it be back in stock?`
+    : `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
 
   const handleInstagramMessage = async () => {
     try {
@@ -72,42 +78,82 @@ export default function ProductDetail({ product }: { product: Product }) {
             <p className="text-2xl md:text-3xl text-brand-accent font-medium mt-3">
               ₹{product.price}
             </p>
+
+            {/* Stock Status */}
+            {product.stock_quantity === 0 && (
+              <div className="mt-4 inline-block">
+                <span className="bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                  SOLD OUT
+                </span>
+              </div>
+            )}
+
             <p className="text-brand-text/70 mt-6 leading-relaxed text-sm md:text-base">
               {product.description || "Beautiful handcrafted accessory perfect for any occasion."}
             </p>
 
-            {/* Add to Bag Button */}
-            <button
-              onClick={handleAddToCart}
-              disabled={!!isInCart}
-              className={`mt-6 w-full py-3 px-6 rounded-full font-medium transition-all ${
-                isInCart
-                  ? "bg-brand-primary/20 text-brand-primary cursor-not-allowed"
-                  : "bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
-              }`}
-            >
-              {isInCart ? "🛍 Added to Bag" : "Add to Bag 🛍"}
-            </button>
+            {/* Add to Bag Button or Inquiry Buttons */}
+            {product.stock_quantity === 0 ? (
+              // Sold Out - Show inquiry buttons
+              <div className="mt-6 space-y-3">
+                <p className="text-center text-gray-600 text-sm font-medium">
+                  This item is currently sold out. Contact us for availability:
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-brand-primary to-brand-accent text-white px-6 py-3 rounded-full hover:opacity-90 hover:scale-105 transition-all shadow-md"
+                  >
+                    <span className="text-xl">💬</span>
+                    <span className="font-medium">Ask on WhatsApp</span>
+                  </a>
+                  <button
+                    onClick={handleInstagramMessage}
+                    className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-brand-primary text-brand-primary px-6 py-3 rounded-full hover:bg-brand-primary hover:text-white hover:scale-105 transition-all shadow-md"
+                  >
+                    <span className="text-xl">📸</span>
+                    <span className="font-medium">Ask on Instagram</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // In Stock - Show Add to Bag and Order buttons
+              <>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!!isInCart}
+                  className={`mt-6 w-full py-3 px-6 rounded-full font-medium transition-all ${
+                    isInCart
+                      ? "bg-brand-primary/20 text-brand-primary cursor-not-allowed"
+                      : "bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
+                  }`}
+                >
+                  {isInCart ? "🛍 Added to Bag" : "Add to Bag 🛍"}
+                </button>
 
-            {/* Order Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-4">
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-linear-to-r from-brand-primary to-brand-accent text-white px-6 py-3 rounded-full hover:opacity-90 hover:scale-105 transition-all shadow-md"
-              >
-                <span className="text-xl">🛍</span>
-                <span className="font-medium">Order via WhatsApp</span>
-              </a>
-              <button
-                onClick={handleInstagramMessage}
-                className="flex items-center justify-center gap-2 bg-white border-2 border-brand-primary text-brand-primary px-6 py-3 rounded-full hover:bg-brand-primary hover:text-white hover:scale-105 transition-all shadow-md"
-              >
-                <span className="text-xl">📸</span>
-                <span className="font-medium">Message on Instagram</span>
-              </button>
-            </div>
+                {/* Order Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                  <a
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-linear-to-r from-brand-primary to-brand-accent text-white px-6 py-3 rounded-full hover:opacity-90 hover:scale-105 transition-all shadow-md"
+                  >
+                    <span className="text-xl">🛍</span>
+                    <span className="font-medium">Order via WhatsApp</span>
+                  </a>
+                  <button
+                    onClick={handleInstagramMessage}
+                    className="flex items-center justify-center gap-2 bg-white border-2 border-brand-primary text-brand-primary px-6 py-3 rounded-full hover:bg-brand-primary hover:text-white hover:scale-105 transition-all shadow-md"
+                  >
+                    <span className="text-xl">📸</span>
+                    <span className="font-medium">Message on Instagram</span>
+                  </button>
+                </div>
+              </>
+            )}
 
             {/* Product Details */}
             {product.category && (

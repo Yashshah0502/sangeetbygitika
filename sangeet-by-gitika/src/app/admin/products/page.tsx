@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
 import {
   Package,
   Edit,
@@ -52,22 +51,19 @@ export default function ProductsManagement() {
   }, [products, searchQuery, sortBy]);
 
   async function fetchProducts() {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
     try {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const response = await fetch("/api/admin/products");
+      const result = await response.json();
 
-      if (error) throw error;
-      setProducts(data || []);
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to fetch products");
+      }
+
+      setProducts(result.products || []);
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching products:", error);
+      toast.error(error.message || "Failed to fetch products");
       setLoading(false);
     }
   }
@@ -97,18 +93,15 @@ export default function ProductsManagement() {
   }
 
   async function handleDelete(id: string) {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
     try {
-      const { error } = await supabase.from("products").delete().eq("id", id);
+      const response = await fetch(`/api/admin/products?id=${id}`, {
+        method: "DELETE",
+      });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        toast.error(`Failed to delete product: ${error.message}`);
-        return;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to delete product");
       }
 
       // Update local state
@@ -122,11 +115,6 @@ export default function ProductsManagement() {
   }
 
   async function handleDuplicate(product: Product) {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
     try {
       const insertData: any = {
         name: `${product.name} (Copy)`,
@@ -145,20 +133,22 @@ export default function ProductsManagement() {
         insertData.description = product.description;
       }
 
-      const { data, error } = await supabase
-        .from("products")
-        .insert(insertData)
-        .select()
-        .single();
+      const response = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(insertData),
+      });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        toast.error(`Failed to duplicate product: ${error.message}`);
-        return;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to duplicate product");
       }
 
       // Add to local state
-      setProducts((prev) => [data, ...prev]);
+      setProducts((prev) => [result.product, ...prev]);
       toast.success("Product duplicated successfully!");
     } catch (error: any) {
       console.error("Error duplicating product:", error);

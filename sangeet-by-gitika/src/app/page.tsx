@@ -22,6 +22,7 @@ type Product = {
   image_urls?: string[];
   category: string;
   created_at: string;
+  stock_quantity?: number;
 };
 
 type Category = {

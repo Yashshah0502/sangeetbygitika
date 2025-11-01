@@ -19,6 +19,7 @@ type Product = {
   image_urls?: string[];
   category: string;
   created_at: string;
+  stock_quantity?: number;
 };
 
 export default function CategoryPage({ params }: { params: Promise<{ category: string }> }) {

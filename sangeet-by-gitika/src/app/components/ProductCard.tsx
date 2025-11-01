@@ -13,6 +13,7 @@ type Product = {
   image_url: string;
   image_urls?: string[];
   category: string;
+  stock_quantity?: number;
 };
 
 type ProductCardProps = {
@@ -42,6 +43,14 @@ export default function ProductCard({
   const images = product.image_urls && product.image_urls.length > 0
     ? product.image_urls
     : [product.image_url];
+
+  // WhatsApp inquiry for sold out items
+  const handleInquiry = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const message = `Hi! I'm interested in ${product.name}${product.price ? ` (₹${product.price})` : ''}. When will it be back in stock?`;
+    const whatsappLink = `https://wa.me/918440866772?text=${encodeURIComponent(message)}`;
+    window.open(whatsappLink, '_blank');
+  };
 
   // Auto-slideshow on hover
   useEffect(() => {
@@ -113,6 +122,14 @@ export default function ProductCard({
             height={800}
             className="rounded-lg md:rounded-xl object-cover h-[120px] sm:h-[200px] md:h-[300px] lg:h-[400px] w-full group-hover:scale-110 transition-transform duration-500"
           />
+          {/* Sold Out Badge */}
+          {product.stock_quantity === 0 && (
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-lg md:rounded-xl flex items-center justify-center">
+              <div className="bg-red-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-lg">
+                SOLD OUT
+              </div>
+            </div>
+          )}
         </div>
         <div className="mt-2 md:mt-3 text-center">
           <h3 className="font-display text-xs sm:text-sm md:text-base lg:text-lg text-brand-text group-hover:text-brand-primary transition-colors line-clamp-2">
@@ -127,7 +144,14 @@ export default function ProductCard({
       </Link>
 
       {/* Add to Cart / Quantity Controls */}
-      {cartQuantity === 0 ? (
+      {product.stock_quantity === 0 ? (
+        <button
+          onClick={handleInquiry}
+          className="mt-2 md:mt-3 w-full py-1.5 md:py-2 px-2 md:px-4 rounded-full text-xs md:text-sm font-medium bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105 transition-all"
+        >
+          Ask About Product 💬
+        </button>
+      ) : cartQuantity === 0 ? (
         <button
           onClick={onAddToCart}
           className="mt-2 md:mt-3 w-full py-1.5 md:py-2 px-2 md:px-4 rounded-full text-xs md:text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"

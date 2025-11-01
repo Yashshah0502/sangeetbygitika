@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase/client";
 import ImageUploader from "./ImageUploader";
+import toast from "react-hot-toast";
 
 export default function ProductForm() {
   const [form, setForm] = useState({
@@ -18,10 +18,8 @@ export default function ProductForm() {
     e.preventDefault();
     setLoading(true);
 
-    // Store the first image in image_url for backwards compatibility
-    // Store all images in image_urls array
-    const { error } = await supabase.from("products").insert([
-      {
+    try {
+      const productData = {
         name: form.name,
         price: Number(form.price),
         description: form.description,
@@ -29,17 +27,33 @@ export default function ProductForm() {
         image_url: imageUrls[0], // First image for backwards compatibility
         image_urls: imageUrls, // All images as array
         is_available: true,
-      },
-    ]);
+      };
 
-    setLoading(false);
-    if (error) {
-      console.error("Insert error:", error);
-      alert(error.message);
-    } else {
-      alert("Product added successfully!");
+      const response = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to add product");
+      }
+
+      toast.success("Product added successfully!");
       setForm({ name: "", price: "", description: "", category: "" });
       setImageUrls([]);
+
+      // Reload the page to show the new product
+      window.location.href = "/admin/products";
+    } catch (error: any) {
+      console.error("Insert error:", error);
+      toast.error(error.message || "Failed to add product");
+    } finally {
+      setLoading(false);
     }
   }
 
