@@ -290,7 +290,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href="https://wa.me/4809522965"
+              href="https://wa.me/918440866772"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all hover:scale-105"
@@ -299,7 +299,7 @@ export default function Home() {
               <span className="font-medium text-brand-text text-sm md:text-base">WhatsApp</span>
             </a>
             <a
-              href="mailto:sangeet@example.com"
+              href="mailto:sangeetbygitika@gmail.com"
               className="flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all hover:scale-105"
             >
               <span>✉️</span>

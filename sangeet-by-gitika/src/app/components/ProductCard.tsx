@@ -132,7 +132,7 @@ export default function ProductCard({
           onClick={onAddToCart}
           className="mt-2 md:mt-3 w-full py-1.5 md:py-2 px-2 md:px-4 rounded-full text-xs md:text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
         >
-          Add to Wishlist
+          Add to  Your Bag
         </button>
       ) : (
         <div className="mt-2 md:mt-3 flex items-center justify-center gap-2 md:gap-3 bg-white/60 backdrop-blur-sm rounded-full p-1 md:p-2 border-2 border-brand-primary">

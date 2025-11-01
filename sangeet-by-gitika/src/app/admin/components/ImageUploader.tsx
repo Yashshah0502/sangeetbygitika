@@ -26,16 +26,12 @@ export default function ImageUploader({ onUpload }: { onUpload: (urls: string[])
       for (let i = 0; i < filesToUpload.length; i++) {
         const file = filesToUpload[i];
 
-        console.log(`Compressing image ${i + 1}/${filesToUpload.length}...`);
-
         // Compress image
         const compressed = await imageCompression(file, {
           maxSizeMB: 0.5,
           maxWidthOrHeight: 1000,
           useWebWorker: true,
         });
-
-        console.log(`Compression done for image ${i + 1}, file size:`, compressed.size);
 
         // Add preview
         setPreviews(prev => [...prev, URL.createObjectURL(compressed)]);
@@ -45,10 +41,8 @@ export default function ImageUploader({ onUpload }: { onUpload: (urls: string[])
         const fileName = `${Date.now()}_${i}_${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `products/${fileName}`;
 
-        console.log(`Uploading image ${i + 1} to Supabase Storage...`, filePath);
-
         // Upload to Supabase Storage
-        const { data, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('product-images')
           .upload(filePath, compressed, {
             cacheControl: '3600',
@@ -62,7 +56,6 @@ export default function ImageUploader({ onUpload }: { onUpload: (urls: string[])
           .from('product-images')
           .getPublicUrl(filePath);
 
-        console.log(`Upload ${i + 1} successful! URL:`, publicUrl);
         uploadedUrls.push(publicUrl);
       }
 

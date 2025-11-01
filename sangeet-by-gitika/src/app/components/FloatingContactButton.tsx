@@ -48,7 +48,7 @@ export default function FloatingContactButton() {
             </h3>
             <div className="space-y-3">
               <a
-                href="https://wa.me/4809522965"
+                href="https://wa.me/918440866772"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-green-50 transition-colors group"
@@ -78,7 +78,7 @@ export default function FloatingContactButton() {
               </a>
 
               <a
-                href="mailto:sangeet@example.com"
+                href="mailto:sangeetbygitika@gmail.com"
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50 transition-colors group"
               >
                 <div className="bg-blue-100 p-2 rounded-full group-hover:bg-blue-200 transition-colors">

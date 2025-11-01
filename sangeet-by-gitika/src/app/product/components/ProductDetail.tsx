@@ -36,7 +36,7 @@ export default function ProductDetail({ product }: { product: Product }) {
     : [product.image_url];
 
   const whatsappMessage = `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
-  const whatsappLink = `https://wa.me/4809522965?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappLink = `https://wa.me/918440866772?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
     <main className="min-h-screen text-brand-text px-6 py-12">

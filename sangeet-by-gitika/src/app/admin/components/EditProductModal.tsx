@@ -17,6 +17,7 @@ type Product = {
   image_url: string;
   image_urls?: string[];
   is_available: boolean;
+  created_at: string;
 };
 
 type Props = {

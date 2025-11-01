@@ -232,7 +232,7 @@ export default function HeroSlidesManagement() {
           await supabase.storage.from("hero-images").remove([fileName]);
         }
       } catch (storageError) {
-        console.log("Could not delete image from storage:", storageError);
+        // Image deletion from storage failed (non-critical)
       }
 
       toast.success("Slide deleted successfully!");

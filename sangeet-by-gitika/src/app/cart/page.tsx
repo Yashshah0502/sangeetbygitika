@@ -16,7 +16,7 @@ export default function CartPage() {
       .map((item, idx) => `${idx + 1}. ${item.name} (x${item.quantity}) – ₹${item.price * item.quantity}`)
       .join("\n")}\n\nTotal: ₹${totalPrice}`;
 
-    const whatsappLink = `https://wa.me/4809522965?text=${encodeURIComponent(message)}`;
+    const whatsappLink = `https://wa.me/918440866772?text=${encodeURIComponent(message)}`;
     window.open(whatsappLink, "_blank");
   };
 
