@@ -122,14 +122,6 @@ export default function ProductCard({
             height={800}
             className="rounded-lg md:rounded-xl object-cover h-[120px] sm:h-[200px] md:h-[300px] lg:h-[400px] w-full group-hover:scale-110 transition-transform duration-500"
           />
-          {/* Sold Out Badge */}
-          {product.stock_quantity === 0 && (
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-lg md:rounded-xl flex items-center justify-center">
-              <div className="bg-red-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-lg">
-                SOLD OUT
-              </div>
-            </div>
-          )}
         </div>
         <div className="mt-2 md:mt-3 text-center">
           <h3 className="font-display text-xs sm:text-sm md:text-base lg:text-lg text-brand-text group-hover:text-brand-primary transition-colors line-clamp-2">
@@ -147,9 +139,13 @@ export default function ProductCard({
       {product.stock_quantity === 0 ? (
         <button
           onClick={handleInquiry}
-          className="mt-2 md:mt-3 w-full py-1.5 md:py-2 px-2 md:px-4 rounded-full text-xs md:text-sm font-medium bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105 transition-all"
+          className="mt-2 md:mt-3 w-full py-1.5 md:py-2 px-2 md:px-4 rounded-full text-xs md:text-sm font-medium bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-500 text-gray-800 hover:from-red-100 hover:to-red-200 hover:scale-105 transition-all shadow-md hover:shadow-lg cursor-pointer"
         >
-          Ask About Product 💬
+          <div className="flex items-center justify-center gap-1 md:gap-2 flex-wrap">
+            <span className="text-red-600 font-bold text-[10px] sm:text-xs">OUT OF STOCK</span>
+            <span className="text-red-400 hidden sm:inline">•</span>
+            <span className="text-gray-700 text-[10px] sm:text-xs">Ask About Product 💬</span>
+          </div>
         </button>
       ) : cartQuantity === 0 ? (
         <button

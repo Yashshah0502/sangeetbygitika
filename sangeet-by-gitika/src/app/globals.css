@@ -34,3 +34,14 @@ body {
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
   min-height: 100vh;
 }
+
+/* Ensure obvious interactive elements use the hand cursor */
+button,
+a[href],
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+summary {
+  cursor: pointer;
+}

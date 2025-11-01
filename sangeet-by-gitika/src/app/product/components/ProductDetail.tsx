@@ -80,7 +80,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             </p>
 
             {/* Stock Status */}
-            {product.stock_quantity === 0 && (
+            {isSoldOut && (
               <div className="mt-4 inline-block">
                 <span className="bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
                   SOLD OUT
@@ -93,7 +93,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             </p>
 
             {/* Add to Bag Button or Inquiry Buttons */}
-            {product.stock_quantity === 0 ? (
+            {isSoldOut ? (
               // Sold Out - Show inquiry buttons
               <div className="mt-6 space-y-3">
                 <p className="text-center text-gray-600 text-sm font-medium">

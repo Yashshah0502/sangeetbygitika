@@ -61,7 +61,7 @@ export default function Home() {
       // Fetch products
       const { data: productsData } = await supabase
         .from("products")
-        .select("id,name,price,image_url,image_urls,category,created_at")
+        .select("id,name,price,image_url,image_urls,category,created_at,stock_quantity")
         .eq("is_available", true);
 
       // Fetch categories
