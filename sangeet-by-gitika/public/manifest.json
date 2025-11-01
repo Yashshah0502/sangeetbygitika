@@ -4,6 +4,6 @@
   "description": "Exquisite handcrafted bags and accessories for the modern woman",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#D4AF37"
+  "background_color": "#fff6fb",
+  "theme_color": "#d6a8e9"
 }

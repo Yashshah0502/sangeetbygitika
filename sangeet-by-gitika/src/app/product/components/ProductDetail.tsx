@@ -38,6 +38,9 @@ export default function ProductDetail({ product }: { product: Product }) {
   const whatsappMessage = `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
   const whatsappLink = `https://wa.me/918440866772?text=${encodeURIComponent(whatsappMessage)}`;
 
+  const instagramMessage = `Hi! I'm interested in ${product.name} (₹${product.price}). Is it available?`;
+  const instagramLink = `https://ig.me/m/sangeetbygitika?text=${encodeURIComponent(instagramMessage)}`;
+
   return (
     <main className="min-h-screen text-brand-text px-6 py-12">
       <Link
@@ -63,7 +66,7 @@ export default function ProductDetail({ product }: { product: Product }) {
               {product.description || "Beautiful handcrafted accessory perfect for any occasion."}
             </p>
 
-            {/* Add to Wishlist Button */}
+            {/* Add to Bag Button */}
             <button
               onClick={handleAddToCart}
               disabled={!!isInCart}
@@ -73,7 +76,7 @@ export default function ProductDetail({ product }: { product: Product }) {
                   : "bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
               }`}
             >
-              {isInCart ? "💕 Added to Wishlist" : "Add to Wishlist 💕"}
+              {isInCart ? "🛍 Added to Bag" : "Add to Bag 🛍"}
             </button>
 
             {/* Order Buttons */}
@@ -88,13 +91,13 @@ export default function ProductDetail({ product }: { product: Product }) {
                 <span className="font-medium">Order via WhatsApp</span>
               </a>
               <a
-                href="https://instagram.com/sangeetbygitika"
+                href={instagramLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 bg-white border-2 border-brand-primary text-brand-primary px-6 py-3 rounded-full hover:bg-brand-primary hover:text-white hover:scale-105 transition-all shadow-md"
               >
                 <span className="text-xl">📸</span>
-                <span className="font-medium">View on Instagram</span>
+                <span className="font-medium">Message on Instagram</span>
               </a>
             </div>
 

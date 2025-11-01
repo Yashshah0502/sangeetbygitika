@@ -75,17 +75,21 @@ export default function WishlistPage() {
                 transition={{ delay: index * 0.1 }}
                 className="flex gap-4 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-luxury"
               >
-                <Image
-                  src={item.image_url}
-                  alt={item.name}
-                  width={120}
-                  height={120}
-                  className="rounded-xl object-cover w-24 h-24 md:w-32 md:h-32"
-                />
+                <Link href={`/product/${item.id}`} className="flex-shrink-0">
+                  <Image
+                    src={item.image_url}
+                    alt={item.name}
+                    width={120}
+                    height={120}
+                    className="rounded-xl object-cover w-24 h-24 md:w-32 md:h-32 hover:opacity-80 transition-opacity cursor-pointer"
+                  />
+                </Link>
                 <div className="flex-1">
-                  <h3 className="font-display text-lg md:text-xl text-brand-text">
-                    {item.name}
-                  </h3>
+                  <Link href={`/product/${item.id}`}>
+                    <h3 className="font-display text-lg md:text-xl text-brand-text hover:text-brand-accent transition-colors cursor-pointer">
+                      {item.name}
+                    </h3>
+                  </Link>
                   <p className="text-brand-accent font-medium text-xl mt-2">
                     ₹{item.price}
                   </p>

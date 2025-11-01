@@ -21,7 +21,12 @@ export default function CartPage() {
   };
 
   const handleInstagramShare = () => {
-    window.open("https://instagram.com/sangeetbygitika", "_blank");
+    const message = `Hi! I'm interested in these products:\n\n${cartItems
+      .map((item, idx) => `${idx + 1}. ${item.name} (x${item.quantity}) – ₹${item.price * item.quantity}`)
+      .join("\n")}\n\nTotal: ₹${totalPrice}`;
+
+    const instagramLink = `https://ig.me/m/sangeetbygitika?text=${encodeURIComponent(message)}`;
+    window.open(instagramLink, "_blank");
   };
 
   if (cartItems.length === 0) {
@@ -31,10 +36,10 @@ export default function CartPage() {
         <main className="min-h-screen text-brand-text px-6 py-12">
           <div className="max-w-2xl mx-auto text-center">
             <h1 className="font-display text-3xl md:text-4xl text-brand-primary mb-4">
-              Your Bucket is Empty
+              Your Cart is Empty
             </h1>
             <p className="text-brand-text/70 mb-8">
-              Add some beautiful pieces to your wishlist!
+              Add some beautiful pieces to your cart!
             </p>
             <Link
               href="/"
@@ -55,7 +60,7 @@ export default function CartPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="font-display text-3xl md:text-4xl text-brand-primary">
-            Your Wishlist 💕
+            Your Cart 🛍
           </h1>
           <Link
             href="/"
@@ -75,17 +80,21 @@ export default function CartPage() {
               transition={{ delay: index * 0.1 }}
               className="flex gap-4 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-luxury"
             >
-              <Image
-                src={item.image_url}
-                alt={item.name}
-                width={120}
-                height={120}
-                className="rounded-xl object-cover w-24 h-24 md:w-32 md:h-32"
-              />
+              <Link href={`/product/${item.id}`} className="flex-shrink-0">
+                <Image
+                  src={item.image_url}
+                  alt={item.name}
+                  width={120}
+                  height={120}
+                  className="rounded-xl object-cover w-24 h-24 md:w-32 md:h-32 hover:opacity-80 transition-opacity cursor-pointer"
+                />
+              </Link>
               <div className="flex-1">
-                <h3 className="font-display text-lg md:text-xl text-brand-text">
-                  {item.name}
-                </h3>
+                <Link href={`/product/${item.id}`}>
+                  <h3 className="font-display text-lg md:text-xl text-brand-text hover:text-brand-accent transition-colors cursor-pointer">
+                    {item.name}
+                  </h3>
+                </Link>
                 <p className="text-brand-accent font-medium text-xl mt-2">
                   ₹{item.price} each
                 </p>
@@ -154,7 +163,7 @@ export default function CartPage() {
             onClick={clearCart}
             className="w-full mt-4 text-brand-text/50 hover:text-red-500 text-sm transition-colors"
           >
-            Clear Wishlist
+            Clear Cart
           </button>
         </div>
       </div>
