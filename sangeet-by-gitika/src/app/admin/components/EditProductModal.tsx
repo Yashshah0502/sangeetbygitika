@@ -84,7 +84,7 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
           ? result.categories
               .map((cat: { name?: string }) => cat?.name)
               .filter((name): name is string => Boolean(name && name.trim()))
-              .map((name) => name.trim())
+              .map((name: string) => name.trim())
           : [];
 
         if (isMounted) {
