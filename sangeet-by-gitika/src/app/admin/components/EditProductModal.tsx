@@ -89,7 +89,7 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
                 const trimmed = cat.name.trim();
                 return trimmed.length > 0 ? trimmed : null;
               })
-              .filter((name): name is string => name !== null)
+              .filter((name: string | null): name is string => name !== null)
           : [];
 
         if (isMounted) {
