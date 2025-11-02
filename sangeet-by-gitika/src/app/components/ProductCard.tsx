@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
+import ProductButton from "./ProductButton";
 
 type Product = {
   id: string;
@@ -163,29 +164,19 @@ export default function ProductCard({
 
       {/* Add to Cart / Quantity Controls */}
       {product.stock_quantity === 0 ? (
-        <button
-          onClick={handleInquiry}
-          className="mt-2 md:mt-3 w-full py-2 px-3 md:px-4 rounded-2xl transition-all bg-white/90 border border-red-200 hover:border-red-300 hover:bg-white shadow-sm hover:shadow-md"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-base md:text-lg leading-none text-red-500"></span>
-            <div className="flex flex-col items-start leading-tight">
-              <span className="text-xs md:text-sm font-semibold uppercase tracking-wide text-red-500">
-                SOLD OUT
-              </span>
-              <span className="text-[10px] md:text-xs text-gray-600 font-normal">
-                Tap to ask about restock 💬
-              </span>
-            </div>
-          </div>
-        </button>
+        <ProductButton
+          isInStock={false}
+          price={effectivePrice}
+          onAskAboutProduct={handleInquiry}
+          className="mt-2 md:mt-3"
+        />
       ) : cartQuantity === 0 ? (
-        <button
-          onClick={onAddToCart}
-          className="mt-2 md:mt-3 w-full py-1.5 md:py-2 px-2 md:px-4 rounded-full text-xs md:text-sm font-medium transition-all bg-linear-to-r from-brand-primary to-brand-accent text-white hover:opacity-90 hover:scale-105"
-        >
-          Add to  Your Bag
-        </button>
+        <ProductButton
+          isInStock
+          price={effectivePrice}
+          onAddToBag={onAddToCart}
+          className="mt-2 md:mt-3"
+        />
       ) : (
         <div className="mt-2 md:mt-3 flex items-center justify-center gap-2 md:gap-3 bg-white/60 backdrop-blur-sm rounded-full p-1 md:p-2 border-2 border-brand-primary">
           <button

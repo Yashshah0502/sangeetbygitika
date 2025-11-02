@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
+import ProductButton from "../components/ProductButton";
 
 export default function WishlistPage() {
   const { wishlistItems, removeFromWishlist, clearWishlist } = useWishlist();
@@ -92,14 +93,19 @@ export default function WishlistPage() {
 
           {/* Wishlist Items */}
           <div className="space-y-4 mb-8">
-            {wishlistItems.map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex gap-4 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-luxury"
-              >
+            {wishlistItems.map((item, index) => {
+              const effectivePrice = item.special_price ?? item.price;
+              const showSpecial =
+                item.special_price != null && item.special_price < item.price;
+
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex gap-4 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-luxury"
+                >
                 <Link href={`/product/${item.id}`} className="flex-shrink-0">
                   <Image
                     src={item.image_url}
@@ -115,56 +121,45 @@ export default function WishlistPage() {
                       {item.name}
                     </h3>
                   </Link>
-                  {(() => {
-                    const effectivePrice = item.special_price ?? item.price;
-                    const showSpecial =
-                      item.special_price != null && item.special_price < item.price;
-                    return effectivePrice ? (
-                      <div className="mt-2 space-y-1">
-                        <p className="text-brand-accent font-semibold text-xl">
-                          ₹{effectivePrice}
-                        </p>
-                        {showSpecial && (
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 text-sm">
-                            <span className="text-brand-text/50 line-through">
-                              ₹{item.price}
-                            </span>
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-medium uppercase tracking-wide">
-                              ✨ {item.special_price_message?.trim() || "Limited time only"}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    ) : null;
-                  })()}
+                  {effectivePrice ? (
+                    <div className="mt-2 space-y-1">
+                      <p className="text-brand-accent font-semibold text-xl">
+                        ₹{effectivePrice}
+                      </p>
+                      {showSpecial && (
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 text-sm">
+                          <span className="text-brand-text/50 line-through">
+                            ₹{item.price}
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-medium uppercase tracking-wide">
+                            ✨ {item.special_price_message?.trim() || "Limited time only"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
 
                   {/* Add to Cart / Inquiry Button */}
                   {item.stock_quantity === 0 ? (
-                    <button
-                      onClick={() => handleInquiry(item)}
-                      className="mt-3 w-full py-2 px-4 rounded-2xl transition-all bg-white border border-red-200 hover:border-red-300 hover:bg-white shadow-sm hover:shadow-md"
-                    >
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-base md:text-lg leading-none text-red-500">
-                          
-                        </span>
-                        <div className="flex flex-col items-start leading-tight">
-                          <span className="text-xs font-semibold uppercase tracking-wide text-red-500">
-                            SOLD OUT
-                          </span>
-                          <span className="text-[11px] md:text-xs text-gray-600 font-normal">
-                            Ask about this product 💬
-                          </span>
-                        </div>
-                      </div>
-                    </button>
+                    <ProductButton
+                      isInStock={false}
+                      price={effectivePrice}
+                      onAskAboutProduct={(e) => {
+                        e.preventDefault();
+                        handleInquiry(item);
+                      }}
+                      className="mt-3"
+                    />
                   ) : (
-                    <button
-                      onClick={() => handleAddToCart(item)}
-                      className="mt-3 px-6 py-2 bg-linear-to-r from-brand-primary to-brand-accent text-white rounded-full hover:opacity-90 hover:scale-105 transition-all text-sm font-medium"
-                    >
-                      Add to Cart
-                    </button>
+                    <ProductButton
+                      isInStock
+                      price={effectivePrice}
+                      onAddToBag={(e) => {
+                        e.preventDefault();
+                        handleAddToCart(item);
+                      }}
+                      className="mt-3"
+                    />
                   )}
                 </div>
                 <button
@@ -174,7 +169,8 @@ export default function WishlistPage() {
                   ×
                 </button>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Clear Wishlist */}
