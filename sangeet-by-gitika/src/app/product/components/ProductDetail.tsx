@@ -112,7 +112,7 @@ export default function ProductDetail({ product }: { product: Product }) {
               </div>
             )}
 
-            <p className="text-brand-text/70 mt-6 leading-relaxed text-sm md:text-base">
+            <p className="text-brand-text/70 mt-6 leading-relaxed text-sm md:text-base whitespace-pre-line">
               {product.description || "Beautiful handcrafted accessory perfect for any occasion."}
             </p>
 

@@ -1,8 +1,9 @@
 "use client";
 import ProductForm from "./components/ProductForm";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
 import AuthCheck from "./components/AuthCheck";
+import Image from "next/image";
 
 type Product = {
   id: string;
@@ -15,18 +16,22 @@ type Product = {
 
 export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  async function fetchProducts() {
-    const { data } = await supabase
+  const fetchProducts = useCallback(async () => {
+    const { data, error } = await supabase
       .from("products")
       .select("id,name,price,special_price,special_price_message,image_url")
       .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching products:", error);
+      return;
+    }
     setProducts(data || []);
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   return (
     <AuthCheck>
@@ -38,7 +43,13 @@ export default function AdminPage() {
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-10 lg:mt-12">
           {products.map((p) => (
             <div key={p.id} className="bg-white rounded-2xl shadow-luxury p-4 md:p-6 text-center">
-              <img src={p.image_url} alt={p.name} className="rounded-xl w-full h-48 sm:h-56 md:h-64 object-cover" />
+              <Image
+                src={p.image_url}
+                alt={p.name}
+                width={400}
+                height={256}
+                className="rounded-xl w-full h-48 sm:h-56 md:h-64 object-cover"
+              />
               <h3 className="mt-3 md:mt-4 font-display text-base md:text-lg">{p.name}</h3>
               <div className="mt-2 space-y-1">
                 <p className="text-sangeet-gold font-semibold text-sm md:text-base">

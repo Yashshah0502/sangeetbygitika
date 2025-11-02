@@ -29,16 +29,21 @@ export default function CategoriesPage() {
     setLoading(true);
     try {
       const response = await fetch("/api/admin/categories");
-      const result = await response.json();
+      const result = (await response.json()) as {
+        categories?: Category[];
+        error?: string;
+      };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to fetch categories");
       }
 
-      setCategories(result.categories || []);
-    } catch (error: any) {
+      setCategories(Array.isArray(result.categories) ? result.categories : []);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Failed to load categories";
       console.error("Error fetching categories:", error);
-      toast.error(error.message || "Failed to load categories");
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -66,7 +71,7 @@ export default function CategoriesPage() {
         body: JSON.stringify({ name: newCategoryName.trim(), slug }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to add category");
@@ -76,9 +81,11 @@ export default function CategoriesPage() {
       setNewCategoryName("");
       setIsAdding(false);
       fetchCategories();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Failed to add category";
       console.error("Error adding category:", error);
-      toast.error(error.message || "Failed to add category");
+      toast.error(message);
     }
   }
 
@@ -96,7 +103,7 @@ export default function CategoriesPage() {
         body: JSON.stringify({ id, name: editName.trim(), slug }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to update category");
@@ -106,9 +113,11 @@ export default function CategoriesPage() {
       setEditingId(null);
       setEditName("");
       fetchCategories();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Failed to update category";
       console.error("Error updating category:", error);
-      toast.error(error.message || "Failed to update category");
+      toast.error(message);
     }
   }
 
@@ -122,7 +131,7 @@ export default function CategoriesPage() {
         method: "DELETE",
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to delete category");
@@ -130,9 +139,13 @@ export default function CategoriesPage() {
 
       toast.success("Category deleted successfully");
       fetchCategories();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to delete category. It may be in use by products.";
       console.error("Error deleting category:", error);
-      toast.error(error.message || "Failed to delete category. It may be in use by products.");
+      toast.error(message);
     }
   }
 

@@ -12,33 +12,38 @@ type Props = {
 export default function AuthCheck({ children }: Props) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
-  const [adminName, setAdminName] = useState<string>("");
   const [isSuperadmin, setIsSuperadmin] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    let isMounted = true;
+
     // Check admin role from cookie
     async function checkRole() {
       try {
-        // The middleware already verifies the token
-        // We just need to check the role for UI purposes
-        const res = await fetch('/api/auth/me');
+        const res = await fetch("/api/auth/me");
+        if (!isMounted) return;
+
         if (res.ok) {
           const data = await res.json();
-          setIsSuperadmin(data.role === 'superadmin');
-          setAdminName(data.name || data.email);
+          setIsSuperadmin(data.role === "superadmin");
         }
       } catch (error) {
-        console.error('Error checking role:', error);
+        console.error("Error checking role:", error);
+      } finally {
+        if (isMounted) {
+          setIsAuthenticated(true);
+          setIsChecking(false);
+        }
       }
     }
 
-    // The middleware already handles authentication
-    // If we're here, we're authenticated
-    setIsAuthenticated(true);
-    setIsChecking(false);
     checkRole();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   async function handleLogout() {

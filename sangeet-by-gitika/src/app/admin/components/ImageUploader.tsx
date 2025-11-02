@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import imageCompression from "browser-image-compression";
+import Image from "next/image";
 
 export default function ImageUploader({ onUpload }: { onUpload: (urls: string[]) => void }) {
   const [uploading, setUploading] = useState(false);
@@ -34,7 +35,7 @@ export default function ImageUploader({ onUpload }: { onUpload: (urls: string[])
         });
 
         // Add preview
-        setPreviews(prev => [...prev, URL.createObjectURL(compressed)]);
+        setPreviews((prev) => [...prev, URL.createObjectURL(compressed)]);
 
         // Create unique filename
         const fileExt = compressed.name.split('.').pop();
@@ -61,11 +62,12 @@ export default function ImageUploader({ onUpload }: { onUpload: (urls: string[])
 
       setUploading(false);
       onUpload(uploadedUrls);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Upload error:", err);
-      setError(err.message || "Upload failed");
+      const message = err instanceof Error ? err.message : "Upload failed";
+      setError(message);
       setUploading(false);
-      alert(`Upload failed: ${err.message}`);
+      alert(`Upload failed: ${message}`);
     }
   }
 
@@ -90,7 +92,15 @@ export default function ImageUploader({ onUpload }: { onUpload: (urls: string[])
       {previews.length > 0 && (
         <div className="flex gap-2 flex-wrap">
           {previews.map((preview, idx) => (
-            <img key={idx} src={preview} alt={`preview ${idx + 1}`} className="w-32 h-32 rounded-lg object-cover" />
+            <Image
+              key={preview}
+              src={preview}
+              alt={`preview ${idx + 1}`}
+              width={128}
+              height={128}
+              className="w-32 h-32 rounded-lg object-cover"
+              unoptimized
+            />
           ))}
         </div>
       )}

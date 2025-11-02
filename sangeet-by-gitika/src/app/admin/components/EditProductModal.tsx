@@ -28,6 +28,15 @@ type Props = {
   onUpdate: (updatedProduct: Product) => void;
 };
 
+const DEFAULT_CATEGORIES = [
+  "Accessories",
+  "Clutch",
+  "Handbag",
+  "Potli",
+  "Sling",
+  "Tote",
+] as const;
+
 export default function EditProductModal({ product, onClose, onUpdate }: Props) {
   const [form, setForm] = useState({
     name: product.name,
@@ -39,6 +48,8 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
     stock: (product.stock_quantity || 0).toString(),
     is_available: product.is_available,
   });
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([...DEFAULT_CATEGORIES]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
 
   const [imageUrls, setImageUrls] = useState<string[]>(
     product.image_urls || [product.image_url]
@@ -55,6 +66,66 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
       ),
     []
   );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchCategories() {
+      setIsLoadingCategories(true);
+      try {
+        const response = await fetch("/api/admin/categories");
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to fetch categories");
+        }
+
+        const names: string[] = Array.isArray(result.categories)
+          ? result.categories
+              .map((cat: { name?: string }) => cat?.name)
+              .filter((name): name is string => Boolean(name && name.trim()))
+              .map((name) => name.trim())
+          : [];
+
+        if (isMounted) {
+          if (names.length > 0) {
+            const uniqueSorted = Array.from(new Set(names)).sort((a, b) =>
+              a.localeCompare(b)
+            );
+            setCategoryOptions(uniqueSorted);
+          } else {
+            setCategoryOptions([...DEFAULT_CATEGORIES]);
+          }
+        }
+      } catch (error: unknown) {
+        console.error("Error loading categories:", error);
+        if (isMounted) {
+          const message =
+            error instanceof Error ? error.message : "Failed to load categories";
+          toast.error(message);
+          setCategoryOptions([...DEFAULT_CATEGORIES]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingCategories(false);
+        }
+      }
+    }
+
+    fetchCategories();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const categoryChoices = useMemo(() => {
+    const names = new Set(categoryOptions);
+    if (form.category) {
+      names.add(form.category);
+    }
+    return Array.from(names).sort((a, b) => a.localeCompare(b));
+  }, [categoryOptions, form.category]);
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -95,9 +166,11 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
       setImageUrls((prev) => [...prev, ...uploadedUrls]);
       setUploading(false);
       toast.success(`${uploadedUrls.length} image(s) uploaded successfully!`);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error uploading images:", error);
-      toast.error("Failed to upload images");
+      const message =
+        error instanceof Error ? error.message : "Failed to upload images";
+      toast.error(message);
       setUploading(false);
     }
   }
@@ -165,9 +238,11 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
       toast.success("Product updated successfully!");
       onUpdate(result.product);
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating product:", error);
-      toast.error(`Failed to update product: ${error?.message || "Unknown error"}`);
+      const message =
+        error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Failed to update product: ${message}`);
     } finally {
       setSaving(false);
     }
@@ -215,14 +290,14 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
               onChange={(e) => setForm({ ...form, category: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
               required
+              disabled={isLoadingCategories && categoryChoices.length === 0}
             >
               <option value="">Select category</option>
-              <option value="Tote">Tote</option>
-              <option value="Clutch">Clutch</option>
-              <option value="Potli">Potli</option>
-              <option value="Sling">Sling</option>
-              <option value="Handbag">Handbag</option>
-              <option value="Accessories">Accessories</option>
+              {categoryChoices.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
             </select>
           </div>
 

@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
-  Package,
   Edit,
   Trash2,
   Copy,
   Search,
   ChevronLeft,
   ChevronRight,
-  ArrowUpDown,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -32,9 +30,21 @@ type Product = {
   is_available: boolean;
 };
 
+type ProductPayload = {
+  name: string;
+  category: string;
+  price: number;
+  stock_quantity: number;
+  image_url: string;
+  is_available: boolean;
+  special_price?: number | null;
+  special_price_message?: string | null;
+  image_urls?: string[];
+  description?: string;
+};
+
 export default function ProductsManagement() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,56 +53,78 @@ export default function ProductsManagement() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const itemsPerPage = 10;
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    filterAndSortProducts();
-  }, [products, searchQuery, sortBy]);
-
-  async function fetchProducts() {
+  const fetchProducts = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/products");
-      const result = await response.json();
+      const result = (await response.json()) as {
+        products?: Product[];
+        error?: string;
+      };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to fetch products");
       }
 
-      setProducts(result.products || []);
-      setLoading(false);
-    } catch (error: any) {
+      setProducts(Array.isArray(result.products) ? result.products : []);
+    } catch (error: unknown) {
       console.error("Error fetching products:", error);
-      toast.error(error.message || "Failed to fetch products");
+      const message =
+        error instanceof Error ? error.message : "Failed to fetch products";
+      toast.error(message);
+    } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  function filterAndSortProducts() {
-    let filtered = [...products];
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
-    // Search filter
-    if (searchQuery) {
-      filtered = filtered.filter((p) =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortBy]);
 
-    // Sort
+  const filteredProducts = useMemo(() => {
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const sorted = [...filtered];
     if (sortBy === "newest") {
-      filtered.sort(
+      sorted.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
     } else if (sortBy === "price") {
-      filtered.sort((a, b) => b.price - a.price);
+      sorted.sort((a, b) => b.price - a.price);
     }
 
-    setFilteredProducts(filtered);
-    setCurrentPage(1); // Reset to first page on filter/sort change
-  }
+    return sorted;
+  }, [products, searchQuery, sortBy]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = useMemo(
+    () => filteredProducts.slice(startIndex, endIndex),
+    [filteredProducts, startIndex, endIndex]
+  );
+  const resultsRangeStart =
+    filteredProducts.length === 0 ? 0 : startIndex + 1;
+  const resultsRangeEnd =
+    filteredProducts.length === 0
+      ? 0
+      : Math.min(endIndex, filteredProducts.length);
+
+  useEffect(() => {
+    if (totalPages === 0) {
+      setCurrentPage(1);
+      return;
+    }
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   async function handleDelete(id: string) {
     try {
@@ -100,7 +132,7 @@ export default function ProductsManagement() {
         method: "DELETE",
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to delete product");
@@ -110,15 +142,16 @@ export default function ProductsManagement() {
       setProducts((prev) => prev.filter((p) => p.id !== id));
       setDeleteConfirm(null);
       toast.success("Product deleted successfully!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error deleting product:", error);
-      toast.error(`Failed to delete product: ${error?.message || "Unknown error"}`);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Failed to delete product: ${message}`);
     }
   }
 
   async function handleDuplicate(product: Product) {
     try {
-      const insertData: any = {
+      const insertData: ProductPayload = {
         name: `${product.name} (Copy)`,
         category: product.category,
         price: product.price,
@@ -130,9 +163,8 @@ export default function ProductsManagement() {
       // Include optional fields if they exist
       if (product.special_price != null) {
         insertData.special_price = product.special_price;
-      }
-      if (product.special_price_message) {
-        insertData.special_price_message = product.special_price_message;
+        insertData.special_price_message =
+          product.special_price_message ?? null;
       }
       if (product.image_urls) {
         insertData.image_urls = product.image_urls;
@@ -149,7 +181,10 @@ export default function ProductsManagement() {
         body: JSON.stringify(insertData),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as {
+        product: Product;
+        error?: string;
+      };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to duplicate product");
@@ -158,18 +193,14 @@ export default function ProductsManagement() {
       // Add to local state
       setProducts((prev) => [result.product, ...prev]);
       toast.success("Product duplicated successfully!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error duplicating product:", error);
-      toast.error(`Failed to duplicate product: ${error?.message || "Unknown error"}`);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Failed to duplicate product: ${message}`);
     }
   }
 
   // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentProducts = filteredProducts.slice(startIndex, endIndex);
-
   if (loading) {
     return (
       <AuthCheck>
@@ -249,8 +280,7 @@ export default function ProductsManagement() {
 
           {/* Results count */}
           <div className="mt-3 md:mt-4 text-xs md:text-sm text-gray-600">
-            Showing {startIndex + 1}-{Math.min(endIndex, filteredProducts.length)} of{" "}
-            {filteredProducts.length} products
+            Showing {resultsRangeStart}-{resultsRangeEnd} of {filteredProducts.length} products
           </div>
         </div>
 

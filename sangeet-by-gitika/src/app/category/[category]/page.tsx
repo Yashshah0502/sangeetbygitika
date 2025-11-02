@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, use } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
@@ -9,7 +9,6 @@ import { useWishlist } from "@/contexts/WishlistContext";
 import LoadingScreen from "@/app/components/LoadingScreen";
 import Header from "@/app/components/Header";
 import ProductCard from "@/app/components/ProductCard";
-import { use } from "react";
 
 type Product = {
   id: string;
@@ -24,51 +23,142 @@ type Product = {
   stock_quantity?: number;
 };
 
-export default function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
-  const resolvedParams = use(params);
-  const category = decodeURIComponent(resolvedParams.category);
+type CategoryRecord = {
+  name: string;
+  slug: string;
+};
 
+export default function CategoryPage({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) {
+  const { category } = use(params);
+  const categorySlug = decodeURIComponent(category);
+
+  const [categoryDetails, setCategoryDetails] = useState<CategoryRecord | null>(
+    null
+  );
   const [products, setProducts] = useState<Product[]>([]);
+  const [displayProducts, setDisplayProducts] = useState<Product[]>([]);
   const [sortBy, setSortBy] = useState("Newest");
   const [loading, setLoading] = useState(true);
   const { addToCart, updateQuantity, cartItems } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
+    let isMounted = true;
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     async function fetchProducts() {
       setLoading(true);
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      try {
+        const { data: categoryRow, error: categoryError } = await supabase
+          .from("categories")
+          .select("name, slug")
+          .eq("slug", categorySlug)
+          .maybeSingle();
 
-      const { data } = await supabase
-      .from("products")
-      .select("id,name,price,special_price,special_price_message,image_url,image_urls,category,created_at,stock_quantity")
-        .eq("is_available", true)
-        .ilike("category", category);
+        if (categoryError) {
+          console.error("Error fetching category:", categoryError);
+        }
 
-      let sortedProducts = data || [];
+        if (isMounted) {
+          setCategoryDetails(categoryRow ?? null);
+        }
 
-      const getEffectivePrice = (product: Product) =>
-        product.special_price ?? product.price ?? 0;
+        const {
+          data: allProducts,
+          error: productsError,
+        } = await supabase
+          .from("products")
+          .select(
+            "id,name,price,special_price,special_price_message,image_url,image_urls,category,created_at,stock_quantity"
+          )
+          .eq("is_available", true);
 
-      // Sort
-      if (sortBy === "Price (Low → High)") {
-        sortedProducts.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
-      } else if (sortBy === "Price (High → Low)") {
-        sortedProducts.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
-      } else {
-        sortedProducts.sort((a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        if (productsError) {
+          throw productsError;
+        }
+
+        const normalizedTargets = Array.from(
+          new Set(
+            [
+              categoryRow?.name,
+              categoryRow?.slug,
+              categorySlug,
+              categorySlug.replace(/-/g, " "),
+            ]
+              .filter(Boolean)
+              .map((value) => value!.trim().toLowerCase())
+          )
         );
-      }
 
-      setProducts(sortedProducts);
-      setLoading(false);
+        const matchingProducts =
+          allProducts?.filter((product) => {
+            const productCategory = product.category?.trim().toLowerCase();
+            return (
+              !!productCategory && normalizedTargets.includes(productCategory)
+            );
+          }) ?? [];
+
+        if (isMounted) {
+          setProducts(matchingProducts);
+        }
+      } catch (error) {
+        console.error("Error loading category products:", error);
+        if (isMounted) {
+          setProducts([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
     }
+
     fetchProducts();
-  }, [category, sortBy]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [categorySlug]);
+
+  useEffect(() => {
+    const sorted = [...products];
+    const getEffectivePrice = (product: Product) =>
+      product.special_price ?? product.price ?? 0;
+
+    if (sortBy === "Price (Low → High)") {
+      sorted.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
+    } else if (sortBy === "Price (High → Low)") {
+      sorted.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
+    } else {
+      sorted.sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    }
+
+    setDisplayProducts(sorted);
+  }, [products, sortBy]);
+
+  const categoryHeading = useMemo(() => {
+    if (categoryDetails?.name) {
+      return categoryDetails.name;
+    }
+    const formatted = categorySlug.replace(/-/g, " ").trim();
+    if (!formatted) {
+      return "Category";
+    }
+    return formatted
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }, [categoryDetails?.name, categorySlug]);
 
   const handleAddToCart = (e: React.MouseEvent, p: Product) => {
     e.preventDefault();
@@ -119,10 +209,10 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
             ← Back to All Products
           </Link>
           <h1 className="font-display text-3xl md:text-4xl text-brand-primary mb-2 capitalize">
-            {category}
+            {categoryHeading}
           </h1>
           <p className="text-brand-text/70">
-            {products.length} {products.length === 1 ? 'product' : 'products'} available
+            {products.length} {products.length === 1 ? "product" : "products"} available
           </p>
         </div>
 
@@ -153,7 +243,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
             <div className="col-span-full text-center py-20">
               <p className="text-brand-text/70">Loading products...</p>
             </div>
-          ) : products.length === 0 ? (
+          ) : displayProducts.length === 0 ? (
             <div className="col-span-full text-center py-20">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -176,7 +266,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
               </motion.div>
             </div>
           ) : (
-            products.map((p, index) => {
+            displayProducts.map((p, index) => {
               const cartItem = cartItems.find(item => item.id === p.id);
               const cartQuantity = cartItem ? cartItem.quantity : 0;
 

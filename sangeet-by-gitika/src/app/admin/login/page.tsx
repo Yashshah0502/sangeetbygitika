@@ -32,7 +32,8 @@ export default function AdminLogin() {
       } else {
         setError(data.error || "Login failed");
       }
-    } catch (err) {
+    } catch (error: unknown) {
+      console.error("Login error:", error);
       setError("Network error. Please try again.");
     } finally {
       setLoading(false);

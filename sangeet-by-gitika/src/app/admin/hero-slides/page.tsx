@@ -47,14 +47,17 @@ export default function HeroSlidesManagement() {
   const fetchSlides = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/hero-slides");
-      const result = await response.json();
+      const result = (await response.json()) as {
+        slides?: HeroSlide[];
+        error?: string;
+      };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to fetch hero slides");
       }
 
-      setSlides(result.slides || []);
-    } catch (error: any) {
+      setSlides(Array.isArray(result.slides) ? result.slides : []);
+    } catch (error: unknown) {
       console.error("Error fetching slides:", error);
       toast.error("Failed to load hero slides");
     } finally {
@@ -65,14 +68,17 @@ export default function HeroSlidesManagement() {
   const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/categories");
-      const result = await response.json();
+      const result = (await response.json()) as {
+        categories?: Category[];
+        error?: string;
+      };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to fetch categories");
       }
 
-      setCategories(result.categories || []);
-    } catch (error: any) {
+      setCategories(Array.isArray(result.categories) ? result.categories : []);
+    } catch (error: unknown) {
       console.error("Error fetching categories:", error);
     }
   }, []);
@@ -122,7 +128,7 @@ export default function HeroSlidesManagement() {
         .getPublicUrl(filePath);
 
       return publicUrl;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error uploading image:", error);
       toast.error("Failed to upload image");
       return null;
@@ -163,7 +169,7 @@ export default function HeroSlidesManagement() {
         }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to add slide");
@@ -181,9 +187,10 @@ export default function HeroSlidesManagement() {
       setImageFile(null);
       setImagePreview(null);
       fetchSlides();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error adding slide:", error);
-      toast.error(`Failed to add slide: ${error.message}`);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Failed to add slide: ${message}`);
     } finally {
       setUploading(false);
     }
@@ -210,7 +217,7 @@ export default function HeroSlidesManagement() {
         }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to update slide");
@@ -220,9 +227,10 @@ export default function HeroSlidesManagement() {
       setEditingId(null);
       setEditForm({});
       fetchSlides();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating slide:", error);
-      toast.error(`Failed to update slide: ${error.message}`);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Failed to update slide: ${message}`);
     }
   };
 
@@ -235,7 +243,7 @@ export default function HeroSlidesManagement() {
         method: "DELETE",
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to delete slide");
@@ -248,14 +256,15 @@ export default function HeroSlidesManagement() {
           await supabase.storage.from("hero-images").remove([fileName]);
         }
       } catch (storageError) {
-        // Image deletion from storage failed (non-critical)
+        console.warn("Failed to remove hero slide image:", storageError);
       }
 
       toast.success("Slide deleted successfully!");
       fetchSlides();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error deleting slide:", error);
-      toast.error(`Failed to delete slide: ${error.message}`);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Failed to delete slide: ${message}`);
     }
   };
 
@@ -270,7 +279,7 @@ export default function HeroSlidesManagement() {
         }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to update slide status");
@@ -278,9 +287,10 @@ export default function HeroSlidesManagement() {
 
       toast.success(`Slide ${!currentActive ? "activated" : "deactivated"}`);
       fetchSlides();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error toggling active:", error);
-      toast.error(`Failed to update slide status: ${error.message || "Unknown error"}`);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Failed to update slide status: ${message}`);
     }
   };
 

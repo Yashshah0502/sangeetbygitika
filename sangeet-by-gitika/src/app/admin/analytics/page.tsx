@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
 import {
   LineChart,
@@ -21,14 +21,6 @@ import { Download, TrendingUp, Eye, Package } from "lucide-react";
 import Link from "next/link";
 import AuthCheck from "../components/AuthCheck";
 
-type Product = {
-  id: string;
-  name: string;
-  category: string;
-  views: number;
-  created_at: string;
-};
-
 type AnalyticsData = {
   dailyViews: { date: string; views: number }[];
   topProducts: { name: string; views: number }[];
@@ -48,17 +40,17 @@ export default function AnalyticsPage() {
     avgViewsPerProduct: 0,
   });
   const [loading, setLoading] = useState(true);
+  const supabase = useMemo(
+    () =>
+      createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      ),
+    []
+  );
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  async function fetchAnalytics() {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
+  const fetchAnalytics = useCallback(async () => {
+    setLoading(true);
     try {
       const { data: products } = await supabase
         .from("products")
@@ -112,13 +104,16 @@ export default function AnalyticsPage() {
           avgViewsPerProduct,
         });
       }
-
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching analytics:", error);
+    } finally {
       setLoading(false);
     }
-  }
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   function exportToCSV() {
     // Prepare CSV content

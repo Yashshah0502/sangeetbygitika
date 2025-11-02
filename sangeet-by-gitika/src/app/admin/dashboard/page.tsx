@@ -1,9 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { Package, Eye, AlertTriangle, TrendingUp, RefreshCw } from "lucide-react";
+import {
+  Package,
+  Eye,
+  AlertTriangle,
+  TrendingUp,
+  RefreshCw,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import AuthCheck from "../components/AuthCheck";
 
 type DashboardStats = {
@@ -14,6 +22,17 @@ type DashboardStats = {
   mostViewedProduct: string | null;
 };
 
+type ProductSummary = {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  stock_quantity: number | null;
+  created_at: string;
+  image_url: string;
+  is_available: boolean;
+};
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalProducts: 0,
@@ -22,33 +41,44 @@ export default function AdminDashboard() {
     totalViews: 0,
     mostViewedProduct: null,
   });
-  const [recentProducts, setRecentProducts] = useState<any[]>([]);
+  const [recentProducts, setRecentProducts] = useState<ProductSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const supabase = useMemo(
+    () =>
+      createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      ),
+    []
+  );
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
+  const fetchDashboardData = useCallback(
+    async (isRefresh = false) => {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
 
-  async function fetchDashboardData(isRefresh = false) {
-    if (isRefresh) setRefreshing(true);
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select(
+            "id,name,category,price,stock_quantity,created_at,image_url,is_available"
+          )
+          .order("created_at", { ascending: false });
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+        if (error) {
+          throw error;
+        }
 
-    try {
-      // Fetch all products
-      const { data: products } = await supabase
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (products) {
+        const products: ProductSummary[] = data ?? [];
         const totalProducts = products.length;
         const activeProducts = products.filter((p) => p.is_available).length;
-        const lowStock = products.filter((p) => (p.stock_quantity || 0) < 5).length;
+        const lowStock = products.filter(
+          (p) => (p.stock_quantity ?? 0) < 5
+        ).length;
 
         setStats({
           totalProducts,
@@ -59,47 +89,62 @@ export default function AdminDashboard() {
         });
 
         setRecentProducts(products.slice(0, 5));
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        if (isRefresh) {
+          setRefreshing(false);
+        }
+        setLoading(false);
       }
+    },
+    [supabase]
+  );
 
-      setLoading(false);
-      setRefreshing(false);
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const StatCard = ({
     title,
     value,
-    icon: Icon,
-    color,
+    icon: IconComponent,
+    borderClass,
+    iconBgClass,
     href,
   }: {
     title: string;
     value: number;
-    icon: any;
-    color: string;
+    icon: LucideIcon;
+    borderClass: string;
+    iconBgClass: string;
     href?: string;
   }) => {
     const content = (
       <div
-        className={`bg-white rounded-2xl shadow-md p-4 md:p-6 hover:shadow-lg transition-all cursor-pointer border-l-4 ${color}`}
+        className={`bg-white rounded-2xl shadow-md p-4 md:p-6 hover:shadow-lg transition-all ${
+          href ? "cursor-pointer" : ""
+        } border-l-4 ${borderClass}`}
       >
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs md:text-sm text-gray-600 mb-1">{title}</p>
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-800">{value}</h3>
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-800">
+              {value}
+            </h3>
           </div>
-          <div className={`p-2 md:p-3 rounded-full bg-linear-to-br ${color.replace("border", "from")}-100 to-brand-hover-to`}>
-            <Icon className="w-5 h-5 md:w-6 md:h-6 text-brand-primary" />
+          <div className={`p-2 md:p-3 rounded-full ${iconBgClass}`}>
+            <IconComponent className="w-5 h-5 md:w-6 md:h-6 text-brand-primary" />
           </div>
         </div>
       </div>
     );
 
     return href ? <Link href={href}>{content}</Link> : content;
+  };
+
+  const handleRefresh = () => {
+    void fetchDashboardData(true);
   };
 
   if (loading) {
@@ -127,17 +172,19 @@ export default function AdminDashboard() {
               Admin Dashboard
             </h1>
             <p className="text-sm md:text-base text-gray-600">
-              Welcome back! Here's your store overview
+              Welcome back! Here&apos;s your store overview
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button
-              onClick={() => fetchDashboardData(true)}
+              onClick={handleRefresh}
               disabled={refreshing}
               className="flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-white border-2 border-brand-primary text-brand-primary rounded-full hover:bg-brand-primary hover:text-white transition-all font-medium disabled:opacity-50 text-sm md:text-base"
             >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+              <RefreshCw
+                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+              />
+              <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
             </button>
             <Link
               href="/admin"
@@ -154,26 +201,30 @@ export default function AdminDashboard() {
             title="Total Products"
             value={stats.totalProducts}
             icon={Package}
-            color="border-blue-500"
+            borderClass="border-blue-500"
+            iconBgClass="bg-blue-100"
             href="/admin/products"
           />
           <StatCard
             title="Active Products"
             value={stats.activeProducts}
             icon={TrendingUp}
-            color="border-green-500"
+            borderClass="border-green-500"
+            iconBgClass="bg-green-100"
           />
           <StatCard
             title="Low Stock Alert"
             value={stats.lowStock}
             icon={AlertTriangle}
-            color="border-orange-500"
+            borderClass="border-orange-500"
+            iconBgClass="bg-orange-100"
           />
           <StatCard
             title="Total Views"
             value={stats.totalViews}
             icon={Eye}
-            color="border-purple-500"
+            borderClass="border-purple-500"
+            iconBgClass="bg-purple-100"
             href="/admin/analytics"
           />
         </div>
@@ -197,26 +248,34 @@ export default function AdminDashboard() {
                 key={product.id}
                 className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                <img
+                <Image
                   src={product.image_url}
                   alt={product.name}
+                  width={64}
+                  height={64}
                   className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-gray-800 text-sm md:text-base truncate">{product.name}</h3>
-                  <p className="text-xs md:text-sm text-gray-500 truncate">{product.category}</p>
+                  <h3 className="font-medium text-gray-800 text-sm md:text-base truncate">
+                    {product.name}
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-500 truncate">
+                    {product.category}
+                  </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="font-bold text-brand-accent text-sm md:text-base">₹{product.price}</p>
+                  <p className="font-bold text-brand-accent text-sm md:text-base">
+                    ₹{product.price}
+                  </p>
                   <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-2 justify-end mt-1">
                     <span
                       className={`px-2 py-0.5 md:py-1 rounded-full text-xs font-medium ${
-                        (product.stock_quantity || 0) < 5
+                        (product.stock_quantity ?? 0) < 5
                           ? "bg-red-100 text-red-600"
                           : "bg-green-100 text-green-600"
                       }`}
                     >
-                      Stock: {product.stock_quantity || 0}
+                      Stock: {product.stock_quantity ?? 0}
                     </span>
                     <p className="text-xs text-gray-500 hidden sm:block">
                       {new Date(product.created_at).toLocaleDateString()}
