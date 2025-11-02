@@ -82,9 +82,10 @@ export default function EditProductModal({ product, onClose, onUpdate }: Props) 
 
         const names: string[] = Array.isArray(result.categories)
           ? result.categories
-              .map((cat: { name?: string }) => cat?.name)
-              .filter((name): name is string => Boolean(name && name.trim()))
-              .map((name: string) => name.trim())
+              .map((cat: { name?: string | null }) => cat?.name ?? null)
+              .filter((name): name is string => typeof name === "string")
+              .map((name) => name.trim())
+              .filter((name) => name.length > 0)
           : [];
 
         if (isMounted) {
