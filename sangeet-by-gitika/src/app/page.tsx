@@ -228,7 +228,7 @@ export default function Home() {
         </motion.div>
 
         {/* Product Grid */}
-        <section className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8 px-3 md:px-6 pb-20">
+        <section className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 lg:gap-8 px-3 md:px-6 pb-20">
           {displayedProducts.length === 0 && filteredProducts.length === 0 ? (
             <div className="col-span-full text-center py-20">
               <motion.div
